@@ -45,9 +45,11 @@ public class PageResultDTO<DTO, EN> {
 
         prev = start>1; // page가 1에 있는 경우에는 prev를 띄울 필요가 없으니까
         next = totalPage > tempEnd; // 전체 페이지보다 끝 페이지의 수가 작아야 next를 표출
+        
         pageList = IntStream
         .rangeClosed(start, end)
         .boxed() // ??
         .collect(Collectors.toList());  // 배열에 값을 한번에 넣기 위해서
+        
     }
 }

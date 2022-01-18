@@ -13,6 +13,8 @@ public interface GuestbookService {
     void modify(GuestbookDTO dto);
     void remove(Long gno);
 
+
+
     default Guestbook dtoToEntity(GuestbookDTO dto) {
         Guestbook entity = Guestbook.builder()
                 .gno(dto.getGno())
@@ -22,7 +24,7 @@ public interface GuestbookService {
                 .build();
         return entity;
     }
-
+    
     // 여기 밑에 코드 확인 경로
     PageResultDTO<GuestbookDTO, Guestbook> getList(PageRequestDTO requestDTO);
     default GuestbookDTO entityToDTO(Guestbook entity) {

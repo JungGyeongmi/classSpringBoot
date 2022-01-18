@@ -3,6 +3,9 @@ package org.zerock.guestbook.service;
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -11,6 +14,7 @@ import org.zerock.guestbook.dto.GuestbookDTO;
 import org.zerock.guestbook.dto.PageRequestDTO;
 import org.zerock.guestbook.dto.PageResultDTO;
 import org.zerock.guestbook.entity.Guestbook;
+import org.zerock.guestbook.entity.QGuestbook;
 import org.zerock.guestbook.repository.GuestbookRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -39,13 +43,16 @@ public class GuestbookServiceImpl implements GuestbookService {
 
     @Override
     // 결과값을 결국 RageResultDTO로 받음
-    public PageResultDTO<GuestbookDTO, Guestbook> getList (PageRequestDTO pagerequestDTO) {
+    public PageResultDTO<GuestbookDTO, Guestbook> getList (PageRequestDTO pageRequestDTO) {
         
         // 원하는 페이지의 번호와 갯수를 정렬과 함께 Pageable 초기화
-        Pageable pageable = pagerequestDTO.getPageable(Sort.by("gno").descending());
+        Pageable pageable = pageRequestDTO.getPageable(Sort.by("gno").descending());
+
+        // 검색조건을 위한 객체 생성
+        BooleanBuilder builder = getSearch(pageRequestDTO);
 
         // 초기화된 Pageable과 repository를 통해서 결과를 담음
-        Page<Guestbook> result = repository.findAll(pageable);
+        Page<Guestbook> result = repository.findAll(builder, pageable);
 
         // 스트림에서 Page객체의 결과를 처리하기 위한 내용을 담은 함수
         Function<Guestbook, GuestbookDTO> fn = (entity -> entityToDTO(entity));
@@ -59,6 +66,46 @@ public class GuestbookServiceImpl implements GuestbookService {
             // PageResultDTO의 생성자를 통해 list타입의 멤버변수에 결과를 담음
             // return new PageResultDTO<>(result, fn);
         }
+
+    private BooleanBuilder getSearch(PageRequestDTO pageRequestDTO) {
+        String type = pageRequestDTO.getType();
+        
+        BooleanBuilder builder = new BooleanBuilder();
+        
+        QGuestbook qGuestbook = QGuestbook.guestbook;
+        
+        String keyword = pageRequestDTO.getKeyword();
+
+
+        // gno > 0 조건만 생성
+        BooleanExpression expression = qGuestbook.gno.gt(0L);
+        builder.and(expression);
+        
+        // 검색 조건이 없는 경우
+        if(type==null || type.trim().length()==0) {
+            return builder;
+        }
+
+        // 검색 조건 작성
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+        if(type.contains("t")) {
+            conditionBuilder.or(qGuestbook.title.contains(keyword));
+        } 
+        if(type.contains("c")) {
+            conditionBuilder.or(qGuestbook.content.contains(keyword));
+        } 
+        
+        if(type.contains("w")) {
+            conditionBuilder.or(qGuestbook.writer.contains(keyword));
+        } 
+        
+        // 모든 조건 통합
+        builder.and(conditionBuilder);
+
+        return builder;
+    }
+
+    
 
     @Override
     public GuestbookDTO read (Long gno) {

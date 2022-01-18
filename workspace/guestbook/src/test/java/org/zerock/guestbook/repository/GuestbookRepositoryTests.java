@@ -30,7 +30,7 @@ public class GuestbookRepositoryTests {
                 Guestbook guestbook = Guestbook.builder()
                         .title("Title...." + i)
                         .content("Content...." + i)
-                        .writer("uesr" + (i % 10))
+                        .writer("user" + (i % 10))
                         .build();
                 System.out.println(repository.save(guestbook));
             }

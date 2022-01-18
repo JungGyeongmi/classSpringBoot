@@ -4,7 +4,9 @@
     <th:block th:fragment="content">
         <h1>Guestbook Modify</h1>
         <form id="frm" th:action="@{/guestbook/modify}" th:method="post">
-            <input type="hidden" th:value="${requestDTO.page}" name="page">
+            <input type="hidden" th:value="${pageRequestDTO.page}" name="page">
+            <input type="hidden" th:value="${pageRequestDTO.type}" name="type">
+            <input type="hidden" th:value="${pageRequestDTO.keyword}" name="keyword">
             <div class="form-group">
                 <label for="">Gno</label>
                 <input type="text" class="form-control" name="gno" 
@@ -40,15 +42,17 @@
                     th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly/>
             </div>
     
-         
-            <button type="submit" th:action="@{/guestbook/modify(page=${requestDTO.page})}" 
-            class="btn btn-primary modifyBtn">
-            Modify
-            </button>
+            <button type="button" 
+                class="btn btn-primary modifyBtn">Modify</button>
             
-            <a th:href="@{/guestbook/list(page=${requestDTO.page})}"><button type="button" class="btn btn-info listBtn">List</button></a>
+            <a th:href="@{/guestbook/list
+                (page=${pageRequestDTO.page},
+                type=${pageRequestDTO.type},
+                keyword=${pageRequestDTO.keyword})}">
+                <button type="button" class="btn btn-info listBtn">List</button>
+            </a>
 
-            <button type="button" class="btn btn-danger removeBtn">Remove</button>
+            <button type="submit" class="btn btn-danger removeBtn">Remove</button>
 
         </form>
         <script th:inline="javascript">
@@ -59,29 +63,19 @@
             var removeBtn = document.querySelector(".removeBtn"); 
             removeBtn.onclick = function() {
                 if(confirm("삭제하시겠습니까?")) {
-                    /*[+var urlremove = [[@{/guestbook/remove}]]+]*/
+                    /*[+var urlremove = [[@{/guestbook/remove(page=${pageRequestDTO.page})}]]+]*/
                     actionForm.setAttribute("action", urlremove);
                     actionForm.setAttribute("method", "post");
                     actionForm.submit();
                 }
             }
             
-            // var modifyBtn = document.querySelector(".modifyBtn");
-            // modifyBtn.onclick = function () {
-            //     /*[+var urlmodify = [[@{/guestbook/modify}]]+]*/
-            //     actionForm.setAttribute("action", urlmodify);
-            //     actionForm.setAttribute("method", "post");
-            //     actionForm.submit();
-               
-            // }
-
-            // var listBtn = document.querySelector(".listBtn");
-            // listBtn.onclick= function (){
-            //     /*[+var urlList = [[@{/guestbook/list(page=${pageRequestDTO})}]]+]*/
-            //     actionForm.setAttribute("action", urlList);
-            //     actionForm.setAttribute("method", "get");
-            //     actionForm.submit();
-            // }
+            var modifyBtn = document.querySelector(".modifyBtn");
+            modifyBtn.onclick = function () {
+                if(confirm("수정하시겠습니까?")) {
+                    actionForm.submit();
+                }
+            }
         </script>
     </th:block>
 </th:block>

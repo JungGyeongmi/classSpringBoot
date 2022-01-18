@@ -7,7 +7,7 @@
 <th:block th:replace="~{layout/basic :: setContent(~{::content})}">
     <th:block th:fragment="content">
         <h1>LIST ...(*￣０￣)ノ
-            <span>
+              <span>
                 <a th:href="@{/guestbook/register}">
                     <button type="button" class="btn btn-outline-primary">
                         Register
@@ -15,7 +15,33 @@
                 </a>
             </span>
         </h1>
+        <form th:action="@{/guestbook/list}" method="get" id="searchForm">
+            <div class="input-group">
+                <input type="hidden" name="page" value="1">
+               
+                <div clas="input-group-prepend">
+                    <select class="form-select" name="type">
+                        <option th:selected="${pageRequestDTO.type == null}">-----------</option>
+                        <option value="t" th:selected="${pageRequestDTO.type == 't'}">제목</option>
+                        <option value="c" th:selected="${pageRequestDTO.type == 'c'}">내용</option>
+                        <option value="w" th:selected="${pageRequestDTO.type == 'w'}">작성자</option>
+                        <option value="tc" th:selected="${pageRequestDTO.type == 'tc'}">제목+내용</option>
+                        <option value="tcw" th:selected="${pageRequestDTO.type == 'tcw'}">제목+내용+작성자</option>
+                    </select>
+                </div>
+               
+                <input id="srch" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
+                <div class="input-group-append" id="button-addon4">
+                    <button class="btn btn-outline-secondary btn-search searchBtn" type="button">
+                        Search
+                    </button>
+                    <button class="btn btn-outline-secondary btn-clear clearBtn" type="button">
+                        Clear
+                    </button>
 
+                </div>
+            </div>
+        </form>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -27,28 +53,41 @@
             </thead>
             <tbody>
                 <!-- dtoList는 단순히 10개의 목록만 들어있다 -->
-                <tbody>
-                    <tr th:each="dto:${result.dtoList}" th:onclick="'location.href=\''+ @{/guestbook/read(gno=${dto.gno},page=${result.page})} + '\''" class="tr-list">
-         
+                <tr th:each="dto:${result.dtoList}" 
+                    th:onclick="'location.href=\''+ 
+                    @{/guestbook/read(gno=${dto.gno},
+                    page=${result.page},
+                    type=${pageRequestDTO.type},
+                    keyword=${pageRequestDTO.keyword})} + '\''" 
+                    class="tr-list">
                         <td>[[${dto.gno}]]</td>
                         <td>[[${dto.title}]]</td>
                         <td>[[${dto.writer}]]</td>
-                        <td>[[${#temporals.format(dto.regDate,'yyyy/mm/dd')}]]</td>           
-                    </a>
+                        <td>[[${#temporals.format(dto.regDate,'yyyy/MM/dd')}]]</td>           
                 </tr>
             </tbody>
         </table>
+        
         <ul class="pagination h-100 justify-content-center align-items-center">
             <li class="page-item" th:if="${result.prev}">
-                <a class="page-link" tabindex="-1" th:href="@{/guestbook/list(page=${result.start-1})}">Previous</a>
+                <a class="page-link" tabindex="-1" th:href="@{/guestbook/list(page=${result.start-1}, 
+                        type=${pageRequestDTO.type},
+                        keyword=${pageRequestDTO.keyword})}">Previous</a>
             </li>
-
-            <li class=" 'page-item '+${result.page == page?'active'} " th:each="page:${result.pageList}">
-                <a class="page-link" th:href="@{/guestbook/list(page=${page})}">[[${page}]]</a>
+        
+            <li th:class=" 'page-item ' + ${result.page == page ? 'active' : ''}" th:each="page : ${result.pageList}">
+                <a class="page-link" th:href="@{/guestbook/list
+                        (page=${page}, 
+                        type=${pageRequestDTO.type},
+                        keyword=${pageRequestDTO.keyword})}">
+                    [[${page}]]
+                </a>
             </li>
-
+        
             <li class="page-item" th:if="${result.next}">
-                <a class="page-link" th:href="@{/guestbook/list(page=${result.end+1})}">Next</a>
+                <a class="page-link" th:href="@{/guestbook/list(page=${result.end+1}, 
+                        type=${pageRequestDTO.type},
+                        keyword=${pageRequestDTO.keyword})}">Next</a>
             </li>
         </ul>
 
@@ -78,34 +117,37 @@
         </div>
 
         <script th:inline="javascript">
-            var msg = `[[${ msg }]]`;            
-            var myTest = document.querySelector("#pTag");
+            var search = document.querySelector("#searchForm");
+            var sel = document.querySelector("#searchForm select");
+            var srch = document.querySelector("#srch");
+            document.querySelector(".searchBtn").onclick = function() {
+                if(sel.options[0].selected == true) {
+                    srch.value="";
+                }
+                search.submit();
+            }
+            document.querySelector(".clearBtn").onclick = function() {
+                sel.options[0].selected =true;
+                srch.value="";
+                search.submit();
+            }
 
-            if (msg!="null") {
-                var gnum = msg.split(' ')[0].substring(1);
-                var temp = msg.split(' ')[1];
-                var noti = temp.substring(0, temp.lastIndexOf(`"`));
-                
+            /*[+var pageTest = [[${result.dtoList.size()}]] +]*/
+            // console.log(pageTest);
+
+
+
+            /*[+var msg = [[${ msg }]] +]*/          
+            var myTest = document.querySelector("#pTag");
+            
+            if (msg!=null) {
+                var gnum = msg.split(' ')[0];
+                var noti = msg.split(' ')[1];
+    
                 var myModal = new bootstrap.Modal(document.getElementById('myModal'));
                 myTest.innerHTML = `${gnum}번 글이 ${noti}되었습니다.`;
                 myModal.show();
             }
-
-            // function read(gno, page, type, keyword) {
-            //     /*[+
-            //     var urlword = [[@{/guestbook/read}]] + "?gno=" +gno+"&page="+page;
-            //     +]*/
-            //     location.href=urlword;
-            // }
-            
-
-            // if (msg) {
-            //     // var myModal = new bootstrap.Modal(document.getElementById('myModal'));
-            //     document.querySelector(".modal-title").textContent="등록 완료";
-            //     document.querySelector(".modal-body").innerHTML="<p>"+msg+"번 글이 등록되었습니다.</p>";
-            //     myTest.innerHTML = `${msg}번 째 글이 입력되었습니다.`;
-            //     myModal.show()
-            // }
         </script>
     </th:block>
 </th:block>
