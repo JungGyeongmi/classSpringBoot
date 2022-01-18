@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{layout/basic :: setContent(~{::content})}">
+    <th:block th:fragment="content">
+        <h1>Guestbook Modify</h1>
+        <form id="frm" th:action="@{/guestbook/modify}" th:method="post">
+            <input type="hidden" th:value="${requestDTO.page}" name="page">
+            <div class="form-group">
+                <label for="">Gno</label>
+                <input type="text" class="form-control" name="gno" 
+                th:value="${dto.gno}" readonly>
+            </div>
+    
+            <div class="form-group">
+                <label for="">Title</label>
+                <input type="text" class="form-control" name="title" 
+                th:value="${dto.title}">
+            </div>
+            
+            <div class="form-group">
+                <label for="">Content</label>
+                <textarea class="form-control" name="content" rows="5">[[${dto.content}]]</textarea>
+            </div>
+    
+            <div class="form-group">
+                <label for="">Writer</label>
+                <input type="text" class="form-control" name="writer"
+                    th:value="${dto.writer}" readonly>
+            </div>
+    
+            <div class="form-group">
+                <label for="">Regidate</label>
+                <input type="text" class="form-control"
+                    th:value="${#temporals.format(dto.regDate, 'yyyy/MM/dd HH:mm:ss')}" readonly/>
+            </div>
+    
+            <div class="form-group">
+                <label for="">ModDate</label>
+                <input type="text" class="form-control"
+                    th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly/>
+            </div>
+    
+         
+            <button type="submit" th:action="@{/guestbook/modify(page=${requestDTO.page})}" 
+            class="btn btn-primary modifyBtn">
+            Modify
+            </button>
+            
+            <a th:href="@{/guestbook/list(page=${requestDTO.page})}"><button type="button" class="btn btn-info listBtn">List</button></a>
+
+            <button type="button" class="btn btn-danger removeBtn">Remove</button>
+
+        </form>
+        <script th:inline="javascript">
+            // console.log(result);
+            
+            var actionForm = document.querySelector("#frm");
+
+            var removeBtn = document.querySelector(".removeBtn"); 
+            removeBtn.onclick = function() {
+                if(confirm("삭제하시겠습니까?")) {
+                    /*[+var urlremove = [[@{/guestbook/remove}]]+]*/
+                    actionForm.setAttribute("action", urlremove);
+                    actionForm.setAttribute("method", "post");
+                    actionForm.submit();
+                }
+            }
+            
+            // var modifyBtn = document.querySelector(".modifyBtn");
+            // modifyBtn.onclick = function () {
+            //     /*[+var urlmodify = [[@{/guestbook/modify}]]+]*/
+            //     actionForm.setAttribute("action", urlmodify);
+            //     actionForm.setAttribute("method", "post");
+            //     actionForm.submit();
+               
+            // }
+
+            // var listBtn = document.querySelector(".listBtn");
+            // listBtn.onclick= function (){
+            //     /*[+var urlList = [[@{/guestbook/list(page=${pageRequestDTO})}]]+]*/
+            //     actionForm.setAttribute("action", urlList);
+            //     actionForm.setAttribute("method", "get");
+            //     actionForm.submit();
+            // }
+        </script>
+    </th:block>
+</th:block>

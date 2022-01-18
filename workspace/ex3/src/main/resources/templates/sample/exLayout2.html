@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+    <th:block 
+    th:replace="~{/fragments/fragment3 :: target(~{:: #ulFirst}, ~{:: #ulSecond})}">
+        <ul id="ulFirst">
+            <li>AAAA</li>
+            <li>AAAA</li>
+            <li>AAAA</li>
+            <li>AAAA</li>
+        </ul>
+        <ul id="ulSecond">
+            <li>BBBB</li>
+            <li>BBBB</li>
+            <li>BBBB</li>
+            <li><a th:href="@{'../'}">HOME</a></li>
+        </ul>
+    </th:block>
