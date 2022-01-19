@@ -1,6 +1,7 @@
 package org.zerock.board.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,17 +18,15 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
+@ToString(exclude = "writer")
 public class Board extends BaseEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long gno;
-    private String tilte;
+    private Long bno;
+    private String title;
     private String content;
 
-    // Has a 관계에서 연결시키는 방법
-    // 동일한 writer 중 하나 
-    @ManyToOne
-    private Member writer;
+    // Board가 Member를 N:1로 참조
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member writer; 
 }

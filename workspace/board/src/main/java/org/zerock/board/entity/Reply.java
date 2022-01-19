@@ -1,6 +1,7 @@
 package org.zerock.board.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,14 +18,15 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@ToString
-public class Reply {
+@ToString(exclude = "board")
+public class Reply extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rno;
     private String text;
     private String replyer;
 
-    @ManyToOne
-    Board board;
+    // Reply가 Board를 N:1로 참조
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Board board;
 }
