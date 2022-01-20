@@ -98,9 +98,6 @@
                   <configuration>
                      <outputDirectory>target/generated-sources/java</outputDirectory>
                      <processor>com.querydsl.apt.jpa.JPAAnnotationProcessor</processor>
-                     <options>
-                        <querydsl.entityAccessors>true</querydsl.entityAccessors>
-                     </options>
                   </configuration>
                </execution>
             </executions>

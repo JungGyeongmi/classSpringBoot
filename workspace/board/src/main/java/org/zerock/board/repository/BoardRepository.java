@@ -8,8 +8,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.zerock.board.entity.Board;
+import org.zerock.board.repository.search.SearchBoardRepository;
 
-public interface BoardRepository extends JpaRepository<Board, Long> { // Long은 primarykey 타입
+public interface BoardRepository extends JpaRepository<Board, Long>,
+    SearchBoardRepository { // Long은 primarykey 타입
     
     
     @Query("select b, w from Board b left join b.writer w where b.bno=:bno")

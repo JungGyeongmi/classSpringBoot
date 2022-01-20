@@ -16,6 +16,8 @@ public interface BoardService {
 
     void removeWithReplies(Long bno);
 
+    void modify(BoardDTO boardDTO);
+
     default Board dtoToEntity(BoardDTO dto){
         Member member = Member.builder().email(dto.getWriterEmail()).build();
         
@@ -34,7 +36,7 @@ public interface BoardService {
         .title(board.getTitle())
         .content(board.getContent())
         .regDate(board.getRegDate())
-        .moddDate(board.getModDate())
+        .modDate(board.getModDate())
         .writerEmail(member.getEmail())
         .writerName(member.getName())
         .replyCount(replyCount.intValue()) // int로 처리하도록
