@@ -65,6 +65,8 @@ public class BoardController {
 
         ra.addAttribute("page", pageRequestDTO.getPage());
         ra.addFlashAttribute("msg", bno+" 삭제");
+        ra.addAttribute("keyword", pageRequestDTO.getKeyword());
+        ra.addAttribute("type", pageRequestDTO.getType());
         return "redirect:/board/list";
     }
 

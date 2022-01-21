@@ -46,7 +46,12 @@ public class BoardServiceImpl implements BoardService{
         
         // 게시판에 필요한 자료(board, member, replyCount)를
         // Object[]에 담고 다시 Page에 담아서 목록을 만들어냄
-        Page<Object[]> result = repository.getBoardWithReplyCount(pageRequestDTO.getPageable(Sort.by("bno")));
+        // Page<Object[]> result = repository.getBoardWithReplyCount(pageRequestDTO.getPageable(Sort.by("bno")));
+
+        Page<Object[]> result = repository.searchPage(
+            pageRequestDTO.getType(), 
+            pageRequestDTO.getKeyword(),
+            pageRequestDTO.getPageable(Sort.by("bno").descending()) );
 
         return new PageResultDTO<>(result, fn);
     }
