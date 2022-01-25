@@ -2,7 +2,6 @@ package org.zerock.mreview2.repository;
 
 import java.util.stream.IntStream;
 
-
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
