@@ -37,8 +37,8 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>org.mariadb.jdbc</groupId>
-			<artifactId>mariadb-java-client</artifactId>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -62,7 +62,6 @@
 			<artifactId>thymeleaf-extras-java8time</artifactId>
 			<version>3.0.4.RELEASE</version>
 		</dependency>
-		<!-- querydsl -->
 		<dependency>
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-apt</artifactId>
@@ -71,7 +70,6 @@
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-jpa</artifactId>
 		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -88,7 +86,6 @@
 					</excludes>
 				</configuration>
 			</plugin>
-			<!-- jpa -->
 			<plugin>
 				<groupId>com.mysema.maven</groupId>
 				<artifactId>apt-maven-plugin</artifactId>
@@ -107,5 +104,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>

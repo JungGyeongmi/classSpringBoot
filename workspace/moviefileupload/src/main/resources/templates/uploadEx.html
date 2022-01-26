@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <!--/* 원래는 아래 폼태그를 쓰지만, 자바스크립트로만 처리함*/-->
+    <!--/* <form type="POST" enctype="multipart/form-data" action=""></form> */-->
+    <input type="file" name="uploadFiles" multiple>
+    <button class="uploadBtn">Upload</button>
+
+    <div class="uploadResult">
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script th:inline="javascript">
+        $('.uploadBtn').click(function () {
+
+            var formData = new FormData();
+
+            var inputFile = $("input[type='file']");
+
+            var files = inputFile[0].files;
+
+            for (var i = 0; i < files.length; i++) {
+                console.log(files[i]);
+                formData.append("uploadFiles", files[i]);
+            }
+
+            function showUploadedImages(arr) {
+                /*[+
+                var urlDisplay = [[@{/display}]]
+                +]*/
+
+                console.log(arr);
+
+                var divArea = $(".uploadResult");
+
+                var str = "";
+
+                for (var i = 0; i < arr.length; i++) {
+                    str += "<div>";
+                    str += `<img src="${urlDisplay}?fileName=${arr[i].thumbnailURL}">`;
+                    str += `<button class='removeBtn' data-name='${arr[i].imageURL}'>REMOVE</button>`
+                    str += "</div>";
+                }
+                divArea.append(str);
+            }
+
+            /*[+
+            var url = [[@{/uploadAjax}]]
+            +]*/
+
+            // 실제 업로드 부분
+            // upload ajax
+            $.ajax({
+                url: url,
+                processData: false, // form 태그의 속성 값을 안 줬기 때문에 false 
+                contentType: false, // form 태그의 속성 값을 안 줬기 때문에 false 
+                data: formData,
+                type: 'POST',
+                dataType: 'json',
+                success: function (result) {
+                    showUploadedImages(result);
+                    // 나중에 화면 처리
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus);
+                }
+            });// $.ajax
+            
+
+            //  UPLOAD RESULT
+            $(".uploadResult").on("click", ".removeBtn", function (e) {
+
+                /*[+
+                var removeUrl = [[@{/removeFile}]]
+                +]*/
+
+                var target = $(this);
+                var fileName = target.data("name");
+                var targetDiv = $(this).closest("div");
+
+                console.log(fileName);
+
+                $.post(removeUrl, { fileName: fileName }, function (result) {
+                    console.log(result);
+                    if (result) {
+                        targetDiv.remove();
+                    }
+                });
+            });
+
+            
+        });
+
+    </script>
+</body>
+</html>

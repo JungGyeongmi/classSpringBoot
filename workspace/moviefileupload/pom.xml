@@ -8,10 +8,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>org.zerock</groupId>
-	<artifactId>mreview</artifactId>
+	<artifactId>moviefileupload</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>mreview</name>
+	<name>moviefileupload</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>11</java.version>
@@ -71,6 +71,13 @@
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-jpa</artifactId>
 		</dependency>
+		<!-- thumbnail -->
+		<!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.12</version>
+		</dependency>
 
 	</dependencies>
 
@@ -88,6 +95,7 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
 			<!-- jpa -->
 			<plugin>
 				<groupId>com.mysema.maven</groupId>
@@ -107,5 +115,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
