@@ -22,51 +22,43 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 @Service
-@Log4j2
 @RequiredArgsConstructor
+@Log4j2
 public class MovieServiceImpl implements MovieService{
 
-    private final MovieRepository movieRepository; // finall
-    private final MovieImageRepository imageRepository; // final
+  private final MovieRepository movieRepository;
+  private final MovieImageRepository imageRepository;
 
-    // 동시에 두 개 발생
-    @Transactional
-    @Override
-    public Long register(MovieDTO movieDTO) {
-        
-        Map<String, Object> entityMap = dtoToEntity(movieDTO);
-        Movie movie = (Movie) entityMap.get("movie");
-        List<MovieImage> movieImageList = (List<MovieImage>)entityMap.get("imgList");
-        
-        movieRepository.save(movie);
+  @Transactional
+  @Override
+  public Long register(MovieDTO movieDTO) {
+    log.info("movie/register....");
+    Map<String, Object> entityMap = dtoToEntity(movieDTO);
+    Movie movie = (Movie) entityMap.get("movie");
+    List<MovieImage> movieImageList = 
+            (List<MovieImage>) entityMap.get("imgList");
+    movieRepository.save(movie);
+    movieImageList.forEach(movieImage ->{
+      imageRepository.save(movieImage);
+    });
+    return movie.getMno();
+  }
 
-        movieImageList.forEach(movieImage -> {
-            imageRepository.save(movieImage);
-        });
-        return movie.getMno();
-    }
-
-    @Override
-    public PageResultDTO<MovieDTO, Object[]> getList(PageRequestDTO pageRequestDTO) {
-        
-        Pageable pageable = pageRequestDTO.getPageable(Sort.by("mno").descending());
-
-        Page<Object[]> result = movieRepository.getListPage(pageable);
-        
-        Function<Object[], MovieDTO> fn = new Function<Object[],MovieDTO>() {
-            @Override
-            public MovieDTO apply(Object[] arr) {
-                log.info(arr[2]);
-                entitiesToDTO(
-                    (Movie)arr[0],
-                    (List<MovieImage>)(Arrays.asList((MovieImage)arr[1])),
-                    (Double)arr[2],
-                    (Long)arr[3]
-                );
-                return null;
-            }
-        };
-        return new PageResultDTO<>(result, fn);
-    }
-
+  @Override
+  public PageResultDTO<MovieDTO, Object[]> getList(PageRequestDTO requestDTO) {
+      
+      Pageable pageable = requestDTO.getPageable(Sort.by("mno").descending());
+  
+      Page<Object[]> result = movieRepository.getListPage(pageable);
+      
+      Function<Object[], MovieDTO> fn = (arr -> entitiesToDTO(
+          (Movie)arr[0],
+          (List<MovieImage>)(Arrays.asList((MovieImage)arr[1])),
+          (Double) arr[2],
+          (Long)arr[3]
+      ));
+  
+      return new PageResultDTO<>(result, fn);
+  }
+  
 }

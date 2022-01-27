@@ -1,8 +1,8 @@
 package org.zerock.mreview.entity;
 
-import javax.persistence.*;
-
 import lombok.*;
+
+import javax.persistence.*;
 
 @Entity
 @Builder
@@ -10,15 +10,13 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @ToString
-@Table(name="m_member") // 중복을 피하기 위해서
-public class Member extends BaseEntity {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mid;
-    private String email;
-    private String pw;
-    private String nickname;
+@Table(name = "m_member")
+public class Member extends BaseEntity{
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long mid;
 
-
+  private String email;
+  private String pw;
+  private String nickname;
 }
