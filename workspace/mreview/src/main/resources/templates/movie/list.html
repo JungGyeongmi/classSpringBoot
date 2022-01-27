@@ -1,156 +1,139 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-    <style>
-        .tr-list{cursor: pointer}
-        .tr-list:hover{background-color: #d6e7ff;}
-    </style>
-    <!-- layout의 basic을 들고와서 setContent에다가 this.content를 넣음 -->
 <th:block th:replace="~{layout/basic :: setContent(~{::content})}">
-    <th:block th:fragment="content">
-        <h1>LIST ...(*￣０￣)ノ
-              <span>
-                <a th:href="@{/board/register}">
-                    <button type="button" class="btn btn-outline-primary">
-                        Register
-                    </button>
-                </a>
-            </span>
-        </h1>
-        <form th:action="@{/board/list}" method="get" id="searchForm">
-            <div class="input-group">
-                <input type="hidden" name="page" value="1">
-               
-                <div clas="input-group-prepend">
-                    <select class="form-select" name="type">
-                        <option th:selected="${pageRequestDTO.type == null}">-----------</option>
-                        <option value="t" th:selected="${pageRequestDTO.type == 't'}">제목</option>
-                        <option value="c" th:selected="${pageRequestDTO.type == 'c'}">내용</option>
-                        <option value="w" th:selected="${pageRequestDTO.type == 'w'}">작성자</option>
-                        <option value="tc" th:selected="${pageRequestDTO.type == 'tc'}">제목+내용</option>
-                        <option value="tcw" th:selected="${pageRequestDTO.type == 'tcw'}">제목+내용+작성자</option>
-                    </select>
-                </div>
-               
-                <input id="srch" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
-                <div class="input-group-append" id="button-addon4">
-                    <button class="btn btn-outline-secondary btn-search searchBtn" type="button">
-                        Search
-                    </button>
-                    <button class="btn btn-outline-secondary btn-clear clearBtn" type="button">
-                        Clear
-                    </button>
-
-                </div>
-            </div>
-        </form>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scrope="col">Bno</th>
-                    <th scrope="col">Title</th>
-                    <th scrope="col">Writer</th>
-                    <th scrope="col">Regdate</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- dtoList는 단순히 10개의 목록만 들어있다 -->
-                <tr th:each="dto:${result.dtoList}"
-                    th:data-type="${pageRequestDTO.type}"
-                    th:data-keyword="${pageRequestDTO.keyword}"
-                    th:onclick="'location.href=\''+ 
-                    @{/board/read(bno=${dto.bno},
-                    page=${result.page},
-                    type=${pageRequestDTO.type},
-                    keyword=${pageRequestDTO.keyword})} + '\''" 
-                    class="tr-list">
-                        <td>[[${dto.bno}]]</td>
-                        <td>[[${dto.title}]] -------- [<b th:text="${dto.replyCount}"></b>]</td>
-                        <td>[[${dto.writerName}]]<small>([[${dto.writerEmail}]])</small></td>
-                        <td>[[${#temporals.format(dto.regDate,'yyyy/MM/dd')}]]</td>           
-                </tr>
-            </tbody>
-        </table>
-        
-        <ul class="pagination h-100 justify-content-center align-items-center">
-            <li class="page-item" th:if="${result.prev}">
-                <a class="page-link" tabindex="-1" th:href="@{/board/list(page=${result.start-1}, 
-                        type=${pageRequestDTO.type},
-                        keyword=${pageRequestDTO.keyword})}">Previous</a>
-            </li>
-        
-            <li th:class=" 'page-item ' + ${result.page == page ? 'active' : ''}" th:each="page : ${result.pageList}">
-                <a class="page-link" th:href="@{/board/list
-                        (page=${page}, 
-                        type=${pageRequestDTO.type},
-                        keyword=${pageRequestDTO.keyword})}">
-                    [[${page}]]
-                </a>
-            </li>
-        
-            <li class="page-item" th:if="${result.next}">
-                <a class="page-link" th:href="@{/board/list(page=${result.end+1}, 
-                        type=${pageRequestDTO.type},
-                        keyword=${pageRequestDTO.keyword})}">Next</a>
-            </li>
-        </ul>
-
-        <!-- CDN modal창 사용을 위해서 -->
-        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
-            integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
-            crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
-            integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
-            crossorigin="anonymous"></script>
-        <div id="myModal" class="modal" tabindex="-1">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Modal title</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p id="pTag">ee</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
-                    </div>
-                </div>
-            </div>
+  <th:block th:fragment="content">
+    <h1>Movie List Page
+      <span>
+        <a th:href="@{/movie/register}">
+          <button type="button" class="btn btn-outline-primary">
+            Register
+          </button>
+        </a>
+      </span>
+    </h1>
+    <form th:action="@{/movie/list}" method="get" id="searchForm">
+      <div class="input-group">
+        <input type="hidden" name="page" value="1">
+        <div class="input-group-prepend">
+          <select class="form-control custom-select" name="type">
+            <option th:selected="${pageRequestDTO.type == null}">-------</option>
+            <option value="t" th:selected="${pageRequestDTO.type == 't'}">제목</option>
+          </select>
         </div>
+        <input id="srch" name="keyword" th:value="${pageRequestDTO.keyword}" class="form-control">
+        <div class="input-group-append" id="button-addon4">
+          <button class="btn btn-outline-secondary searchBtn" type="button">Search</button>
+          <button class="btn btn-outline-secondary clearBtn" type="button">Clear</button>
+        </div>
+      </div>
+    </form>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Title & Picture</th>
+          <th scope="col">Review Count</th>
+          <th scope="col">AVG Rating</th>
+          <th scope="col">Regdate</th>
+        </tr>
+      </thead>
+      <style>
+        .tr-list {
+          cursor: pointer
+        }
 
-        <script th:inline="javascript">
-            var search = document.querySelector("#searchForm");
-            var sel = document.querySelector("#searchForm select");
-            var srch = document.querySelector("#srch");
-            document.querySelector(".searchBtn").onclick = function() {
-                if(sel.options[0].selected == true) {
-                    srch.value="";
-                }
-                search.submit();
-            }
-            document.querySelector(".clearBtn").onclick = function() {
-                sel.options[0].selected =true;
-                srch.value="";
-                search.submit();
-            }
+        .tr-list:hover {
+          background-color: #d6e7ff;
+        }
+      </style>
+      <tbody>
+        <tr th:data-type="${pageRequestDTO.type}" 
+            th:data-keyword="${pageRequestDTO.keyword}"
+            th:each="dto : ${result.dtoList}" 
+            th:onclick="'location.href=\''+ @{/movie/read(mno=${dto.mno}, 
+                        page=${result.page},type=${pageRequestDTO.type}, 
+                        keyword=${pageRequestDTO.keyword})} + '\''" class="tr-list">
+            <!--/* th:onclick="'location.href=\''+ @{/movie/read(mno=${dto.mno},page=${result.page},'this.getAttribute('data-type')',this.getAttribute('Data-keyworld')} + '\''"> */-->
+            <th scope="row">[[${dto.mno}]]</th>
+            <td><img th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null}"
+              th:src="|@{/display}?fileName=${dto.imageDTOList[0].getThumbnailURL()}|">[[${dto.title}]]</td>            <td><b>[[${dto.reviewCnt}]]</b></td>
+            <td><b>[[${dto.avg}]]</b></td>
+            <td>[[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
+        </tr>
+      </tbody>
+    </table>
+    <ul class="pagination h-100 justify-content-center align-items-center">
+      <li class="page-item " th:if="${result.prev}">
+        <a class="page-link" th:href="@{/movie/list(
+              page=${result.start-1}, 
+              type=${pageRequestDTO.type},
+              keyword=${pageRequestDTO.keyword} )}" tabindex="-1">Previous</a>
+      </li>
+      <li th:class=" 'page-item ' + ${result.page==page?'active':''} " th:each="page : ${result.pageList}">
+        <a class="page-link" th:href="@{/movie/list(
+              page=${page}, 
+              type=${pageRequestDTO.type},
+              keyword=${pageRequestDTO.keyword} )}">[[${page}]]</a>
+      </li>
+      <li class="page-item" th:if="${result.next}">
+        <a class="page-link" th:href="@{/movie/list(
+              page=${result.end+1}, 
+              type=${pageRequestDTO.type},
+              keyword=${pageRequestDTO.keyword} )}">Next</a>
+      </li>
+    </ul>
 
-            /*[+var pageTest = [[${result.dtoList.size()}]] +]*/
-            // console.log(pageTest);
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+      crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+      crossorigin="anonymous"></script>
+    <div id="myModal" class="modal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Modal title</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Modal body text goes here.</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <script th:inline="javascript">
+      /*[+
+      var msg=[[${msg}]];
+      +]*/
+      if (msg) {
+        console.log(msg);
+        var bnum = msg.split(' ')[0];
+        var noti = msg.split(' ')[1];
+        var myModal =
+          new bootstrap.Modal(document.getElementById('myModal'));
+        document.querySelector(".modal-title").textContent = noti + " 완료";
+        document.querySelector(".modal-body").innerHTML =
+          "<p>" + bnum + "번글이 " + noti + "되었습니다.</p>";
+        myModal.show();
+      }
+      var searchForm = document.querySelector("#searchForm");
+      document.querySelector(".searchBtn").onclick = function () {
+        searchForm.submit();
+      }
+      document.querySelector(".clearBtn").onclick = function () {
+        var sel = document.querySelector("#searchForm select");
+        var srch = document.querySelector("#srch");
+        sel.options[0].selected = true;
+        srch.value = "";
+        searchForm.submit();
+      }
 
-
-            /*[+var msg = [[${ msg }]] +]*/          
-            var myTest = document.querySelector("#pTag");
-            
-            if (msg!=null) {
-                var bnum = msg.split(' ')[0];
-                var noti = msg.split(' ')[1];
-    
-                var myModal = new bootstrap.Modal(document.getElementById('myModal'));
-                myTest.innerHTML = `${bnum}번 글이 ${noti}되었습니다.`;
-                myModal.show();
-            }
-        </script>
-    </th:block>
+    </script>
+  </th:block>
 </th:block>

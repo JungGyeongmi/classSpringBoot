@@ -71,6 +71,13 @@
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-jpa</artifactId>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/net.coobird/thumbnailator -->
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>0.4.16</version>
+		</dependency>
+
 
 	</dependencies>
 
@@ -107,5 +114,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
