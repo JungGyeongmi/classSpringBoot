@@ -9,6 +9,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.mreview.dto.MovieDTO;
 import org.zerock.mreview.dto.PageRequestDTO;
 import org.zerock.mreview.service.MovieService;
+import org.zerock.mreview.service.MovieServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -35,9 +36,17 @@ public class MovieContoller {
 
     @GetMapping("/list")
     public void list(PageRequestDTO pageRequestDTO, Model model) {
+        
         log.info("pageRequestDTO: " + pageRequestDTO);
-
         model.addAttribute("result", movieService.getList(pageRequestDTO));
+    }
+
+    @GetMapping({"/read","/modify"})
+    public void read(Long mno, PageRequestDTO pageRequestDTO, Model model) {
+
+        log.info("pageRequestDTO: " + pageRequestDTO);     
+        MovieDTO movieDTO = movieService.getMovie(mno);
+        model.addAttribute("dto", movieDTO);
     }
 
 }

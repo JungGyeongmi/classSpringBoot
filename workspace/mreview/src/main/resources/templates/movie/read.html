@@ -3,39 +3,34 @@
 <th:block th:replace="~{layout/basic :: setContent(~{::content})}">
     <th:block th:fragment="content">
         <style>
-            a {
-                text-decoration: none;
-            }
-
-            .card-body {
-                border-radius: 30px;
-                margin-bottom: 10px;
-            }
-
-            .card-body:hover{
-                box-shadow: black 1px 1px 2px;
-            }
+            a {text-decoration: none;}
+            .card-body { border-radius: 30px; margin-bottom: 10px;}
+            .card-body:hover{ box-shadow: black 1px 1px 2px; }
         </style>
+
         <h1>
             Board Read Page
         </h1>
 
         <div class="form-group">
-            <label>Bno</label>
-            <input type="text" class="form-control" name="bno" th:value="${dto.bno}" readonly>
+            <label>Mno</label>
+            <input type="text" class="form-control" name="mno"
+                th:value="${dto.mno}" readonly>
         </div>
         <div class="form-group">
             <label>Title</label>
-            <input type="" class="form-control" rows="5" name="title" th:value="${dto.title}" readonly></input>
+            <input type="" class="form-control" rows="5" name="title"
+                th:value="${dto.title}" readonly></input>
         </div>
         <div class="form-group">
-            <label>Content</label>
-            <textarea type="text" class="form-control" name="content" readonly>[[${dto.content}]]
-                </textarea>
+            <label>ReviewCount</label>
+            <input type="" class="form-control" rows="5" name="title"
+                th:value="${dto.reviewCnt}" readonly></input>
         </div>
         <div class="form-group">
-            <label>Writer</label>
-            <input type="text" class="form-control" name="writer" th:value="${dto.writerName}" readonly />
+            <label>Avg</label>
+            <input type="text" class="form-control" name="writer"
+                th:value="${dto.avg}" readonly />
         </div>
         <div class="form-group">
             <label>RegDate</label>
@@ -47,13 +42,23 @@
             <input type="text" class="form-control" name="modDate"
                 th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly />
         </div>
-        <a th:href="@{/board/modify(bno=${dto.bno},
-                    page=${pageRequestDTO.page},
+
+        <div class="uploadResult">
+            <ul>
+                <li th:each="movieImage : ${dto.imageDTOList}">
+                    <img th:if="${movieImage.path != null}" 
+                        th:src="|/@{'/display'}?fileName=${movieImage.getThumbnailURL()}|">
+                </li>
+            </ul>
+        </div>
+        
+        <a th:href="@{/board/modify(mno=${dto.mno},
+                    page=${ pageRequestDTO.page },
                     type=${ pageRequestDTO.type },
                     keyword=${ pageRequestDTO.keyword })}">
             <button type="button" class="btn btn-primary">Modify</button>
         </a>
-        <a th:href="@{/board/list(page=${pageRequestDTO.page},
+        <a th:href="@{ /board/list(page=${pageRequestDTO.page },
                     type=${ pageRequestDTO.type },
                     keyword=${ pageRequestDTO.keyword })}">
             <button type="button" class="btn btn-info">List</button>
@@ -63,11 +68,10 @@
             <div class="mt-4">
                 <h5><span class="badge btn-warning addReply">Add Reply</span> </h5>
                 <h5>
-                    <span class="badge btn-warning replyCount"> Reply Count [[ ${ dto.replyCount } ]] </span>
+                    <span class="badge btn-warning replyCount"> Reply Count [[ ${ dto.reviewCnt } ]] </span>
                 </h5>
             </div>
             <div class="list-group replyList">
-
             </div>
         </div>
 
@@ -106,7 +110,7 @@
         <script th:inline="javascript">
             $(document).ready(function () {
                 /*[+
-                var bno = [[ ${dto.bno} ]]
+                var mno = [[ ${dto.mno} ]]
                 var url = [[ @{/replies/board/} ]]
                 var replyUrl = [[ @{/replies/} ]]
                 +]*/
@@ -125,7 +129,7 @@
 
                 // 특정한 게시글의 댓글을 처리하는 함수
                 function loadJSONData() {
-                    $.getJSON(url + bno, function (arr) {
+                    $.getJSON(url + mno, function (arr) {
                         console.log(arr);
 
                         var str = "";
@@ -169,7 +173,7 @@
                 // Reply 모달창 save 버튼 이벤트--------------------------------------
                 $(".replySave").click(function () {
                     var reply = {
-                        bno: bno,
+                        mno: mno,
                         text: $('input[name="replyText"]').val(),
                         replyer: $('input[name="replyer"]').val()
                     }
@@ -246,7 +250,7 @@
                     console.log("rno>>>>"+ rno)
                     var reply = {
                         rno: rno,
-                        bno: bno,
+                        mno: mno,
                         text: $('input[name="replyText"]').val(),
                         replyer: $('input[name="replyer"]').val()
                     }
