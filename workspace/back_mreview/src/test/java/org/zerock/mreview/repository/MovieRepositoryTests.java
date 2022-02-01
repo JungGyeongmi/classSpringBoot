@@ -27,7 +27,7 @@ public class MovieRepositoryTests {
     @Test
     @Transactional
     @Commit
-    public void insertMoview() {
+    public void insertMovie() {
         IntStream.rangeClosed(1, 100).forEach(i -> {
             Movie movie = Movie.builder().title("Movie..."+i).build();
             movieRepository.save(movie);

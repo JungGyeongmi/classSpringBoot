@@ -1,30 +1,15 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>란다 극장 목차</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>mreview index</title>
 </head>
-<style>
-    /* .poster {
-        width: 100px;
-        height: 100px;
-        background-image: url("/image/공룡세상포스터.jpg");
-        background-position: center center;
-
-   } */
-</style>
 <body>
-    <h1>Movie Review(무-비 리:부)</h1>
-    <hr>
-
-    <a th:href="@{/movie/list}">리스뜨</a>
-    <br>
-    <a th:href="@{/movie/register}">레지스타</a>
-    <div class="poster">
-        <img src="D:\classSpringBoot\workspace\mreview\src\main\resources\templates\image\giga.png" 
-            alt="사진불러오기실패" width="100" height="100">
-    </div>
+  <h1>Movie Review</h1><hr>
+  <a th:href="@{/movie/list}">/movie/list</a><br>
+  <a th:href="@{/movie/register}">/movie/register</a><br>
+  
 </body>
 </html>

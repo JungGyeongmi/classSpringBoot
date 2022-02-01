@@ -14,14 +14,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovieDTO {
-    private Long mno;
-    private String title;
+  private Long mno;
+  private String title;
 
-    @Builder.Default // 객체를 만들 때 기본값으로 만들겠다.
-    private List<MovieImageDTO> imageDTOList = new ArrayList<>();
-
-    private double avg;
-    private int reviewCnt;
-    private LocalDateTime regDate;
-    private LocalDateTime modDate;
+  @Builder.Default
+  private List<MovieImageDTO> imageDTOList=new ArrayList<>();
+  
+  private double avg;
+  private int reviewCnt;
+  private LocalDateTime regDate;
+  private LocalDateTime modDate;
 }

@@ -50,15 +50,18 @@
         <tr th:data-type="${pageRequestDTO.type}" 
             th:data-keyword="${pageRequestDTO.keyword}"
             th:each="dto : ${result.dtoList}" 
-            th:onclick="'location.href=\''+ @{/movie/read(mno=${dto.mno}, 
-                        page=${result.page},type=${pageRequestDTO.type}, 
-                        keyword=${pageRequestDTO.keyword})} + '\''" class="tr-list">
-            <!--/* th:onclick="'location.href=\''+ @{/movie/read(mno=${dto.mno},page=${result.page},'this.getAttribute('data-type')',this.getAttribute('Data-keyworld')} + '\''"> */-->
-            <th scope="row">[[${dto.mno}]]</th>
-            <td><img th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null}"
-              th:src="|@{/display}?fileName=${dto.imageDTOList[0].getThumbnailURL()}|">[[${dto.title}]]</td>            <td><b>[[${dto.reviewCnt}]]</b></td>
-            <td><b>[[${dto.avg}]]</b></td>
-            <td>[[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
+            class="tr-list"
+            th:onclick="'location.href=\''+ 
+            @{/movie/read(mno=${dto.mno},
+            page=${result.page},
+            type=${pageRequestDTO.type},
+            keyword=${pageRequestDTO.keyword})} + '\''" >
+          <th scope="row">[[${dto.mno}]]</th>
+          <td><img th:if="${dto.imageDTOList.size() > 0 && dto.imageDTOList[0].path != null}"
+            th:src="|@{/display}?fileName=${dto.imageDTOList[0].getThumbnailURL()}|">[[${dto.title}]]</td>
+          <td><b th:text="${dto.reviewCnt}"></b></td>
+          <td><b th:text="${dto.avg}"></b></td>
+          <td>[[${#temporals.format(dto.regDate,'yyyy/MM/dd')}]]</td>
         </tr>
       </tbody>
     </table>
