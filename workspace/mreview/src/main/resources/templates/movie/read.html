@@ -1,230 +1,351 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout/basic :: setContent(~{::content})}">
-  <th:block th:fragment="content">
-    <h1>GuestBook Read Page</h1>
-    <div class="form-group">
-      <label>Gno</label>
-      <input type="text" class="form-control" name="bno"
-        th:value="${dto.bno}" readonly />
-    </div>
-    <div class="form-group">
-      <label>Title</label>
-      <input type="text" class="form-control" name="title"
-      th:value="${dto.title}" readonly />
-    </div>
-    <div class="form-group">
-      <label>Content</label>
-      <textarea class="form-control" rows="5" readonly
-            name="content">[[${dto.content}]]</textarea>
-    </div>
-    <div class="form-group">
-      <label>Writer</label>
-      <input type="text" class="form-control" name="writer"
-      th:value="${dto.writerName}" readonly/>
-    </div>
-    <div class="form-group">
-      <label>RegDate</label>
-      <input type="text" class="form-control" name="regDate" th:value=
-      "${#temporals.format(dto.regDate,'yyyy/MM/dd HH:mm:ss')}" readonly/>
-    </div>
-    <div class="form-group">
-      <label>ModDate</label>
-      <input type="text" class="form-control" name="modDate" th:value=
-      "${#temporals.format(dto.modDate,'yyyy/MM/dd HH:mm:ss')}" readonly/>
-    </div>
-    <a th:href="@{/board/modify(gno=${dto.bno}, page=${pageRequestDTO.page}
-      ,type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}">
-      <button type="button" class="btn btn-primary">Modify</button>
-    </a>
-    <a th:href="@{/board/list(page=${pageRequestDTO.page}
-    ,type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}">
-      <button type="button" class="btn btn-info">List</button>
-    </a>
-    <div>
-      <div class="mt-4">
-        <h5><span class="btn btn-info addReply">Add Reply</span></h5>
-        <h5><span class="btn btn-warning replyCount">
-          Reply Count[[${dto.replyCount}]]
-        </span> </h5>
-      </div>
-      <style>
-        .card-title{cursor:pointer;}
-        .card-subtitle{display:inline-block;width:100px;}
-        .card-text{display:inline-block;width:200px;text-align: right;}
-      </style>
-      <div class="list-group replyList">
-
-      </div>
-      <script src="https://code.jquery.com/jquery-3.6.0.min.js" 
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-      <script th:inline="javascript">
-        $(document).ready(function (){
-          /*[+
-          var bno = [[${dto.bno}]];
-          var url = [[@{/replies/board/}]];
-          +]*/
-          var listGroup = $(".replyList");
-          function formatTime(str){
-            var date = new Date(str);
-            return date.getFullYear()+'/'+
-                   (date.getMonth()+1)+'/'+
-                   date.getDate()+' '+
-                   date.getHours()+':'+
-                   date.getMinutes();
-          }
-          function loadJSONData(){
-            $.getJSON(url+bno, function(arr){
-              console.log(arr);
-              var str = "";
-              $('.replyCount').html(" Reply Count : "+arr.length);
-              $.each(arr, function(idx, reply) {
-                console.log(reply);
-                str += ' <div class="card-body form-control" data-rno="'+reply.rno
-                  +'"><b>'+reply.rno+'</b>';
-                str += ' <h5 class="card-title">'+reply.text+'</h5>';
-                str += ' <h6 class="card-subtitle mb-2 text-muted">'
-                +reply.replyer+'</h6>  ';
-                str += ' <p class="card-text">'+formatTime(
-                  reply.regDate)+'</p>'
-                str += ' </div>';
-              });
-              listGroup.html(str);
-            });
-          }
-          loadJSONData();
-          var myModal =
-          new bootstrap.Modal(document.getElementById('myModal'));
-          $('.replyList').on("click", ".card-body", function(){
-            var rno = $(this).data("rno");
-            $("input[name='replyText']").val($(this)
-                                  .find('.card-title').html());
-            $("input[name='replyer']").val($(this)
-                                  .find('.card-subtitle').html());
-            $("input[name='rno']").val(rno);
-            $("#myModal .btn").hide();
-            $(".replyRemove, .replyModify, .replyClose").show();
-            myModal.show();
-          });
-          /*[+
-            var urlReply = [[@{/replies/}]];
-          +]*/
-          $(".addReply").click(function(){
-            myModal.show();
-            $('input[name="replyText"]').val('');
-            $('input[name="replyer"]').val('');
-            $('.modal-title').html("댓글 입력");
-            $("#myModal .btn").hide();
-            $(".replySave, .replyClose").show();
-          });
-          $(".replyRemove").on("click",function(){
-            var rno=$("input[name='rno']").val();
-            console.log("rno>>>"+rno);
-            $.ajax({
-              url: urlReply+rno,
-              method: 'delete',
-              success: function(result){
-                console.log("result: "+result);
-                if(result === "success"){
-                  alert('댓글이 삭제되었습니다.');
-                  loadJSONData();
-                  myModal.hide();
-                }
-              }
-            });
-          });
-          $(".replyModify").on("click",function(){
-            var rno=$("input[name='rno']").val();
-            var reply = {rno:rno, bno:bno, 
-              text:$('input[name="replyText"]').val(),
-              replyer:$('input[name="replyer"]').val()
-            }
-            console.log("replyModify reply : "+reply);
-            $.ajax({
-              url: urlReply+rno,
-              method: 'put',
-              data: JSON.stringify(reply),
-              contentType: 'application/json; charset=utf-8',
-              success: function(result){
-                console.log("result: "+result);
-                if(result === "success"){
-                  alert('댓글이 수정되었습니다.');
-                  loadJSONData();
-                  myModal.hide();
-                }
-              }
-            });
-          });
-
-          $(".replySave").click(function(){
-            var replyTextw = $('input[name="replyText"');
-            var replyerw = $('input[name="replyer"');
-            if(replyTextw.val()=="") {
-              alert("Reply Text를 확인해주세요");
-              replyTextw.focus();
-              return;
-            }
-            if(replyerw.val()=="") {
-              alert("Replyer를 확인해주세요");
-              replyerw.focus();
-              return;
-            }
-            var reply = {
-              bno: bno,
-              text: replyTextw.val(),
-              replyer: replyerw.val()
-            };
-            console.log(reply);
-            $.ajax({
-              url: urlReply,
-              method: 'post',
-              data: JSON.stringify(reply),
-              contentType:'application/json;charset=utf-8',
-              dataType: 'json',
-              success: function(data){
-                console.log(data);
-                var newRno= parseInt(data);
-                alert(newRno+"번글이 등록되었습니다.");
-                loadJSONData();
-                myModal.hide();
-              }
-            });
-          });
-      });
-      </script>
-
-      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
-      integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
-      crossorigin="anonymous"></script>
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
-      integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
-      crossorigin="anonymous"></script>
-      <div id="myModal" class="modal" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Modal title</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group" style="margin-bottom: 10px;">
-              <input type="text" class="form-control" name="replyText" placeholder="Reply Text..." />
-            </div>
-            <div class="form-group">
-              <input type="text" class="form-control" name="replyer" placeholder="Replyer" />
-              <input type="hidden" name="rno">
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-danger replyRemove">Remove</button>
-            <button type="button" class="btn btn-warning replyModify">Modify</button>
-            <button type="button" class="btn btn-primary replySave">Save</button>
-            <button type="button" class="btn btn-outline-secondary replyClose" data-bs-dismiss="modal">Close</button>
-          </div>
+    <th:block th:fragment="content">
+        <h1>무-비 읽기 화면</h1>
+        <div class="form-group">
+            <label>무비 남바</label>
+            <input type="text" class="form-control" name="mno" th:value="${dto.mno}" readonly />
         </div>
-      </div>
-      </div>
+        <div class="form-group">
+            <label>따이뜰</label>
+            <input type="text" class="form-control" name="title" th:value="${dto.title}" readonly />
+        </div>
+        <div class="form-group">
+            <label>리뷰 개수</label>
+            <input type="text" class="form-control" name="reviewCnt" th:value="${dto.reviewCnt}" readonly />
+        </div>
+        <div class="form-group">
+            <label>중간값</label>
+            <input type="text" class="form-control" name="avg" th:value="${dto.avg}" readonly />
+        </div>
+        <div class="form-group">
+            <label>등록일</label>
+            <input type="text" class="form-control" name="regDate"
+                th:value="${#temporals.format(dto.regDate,'yyyy/MM/dd HH:mm:ss')}" readonly />
+        </div>
+        <div class="form-group">
+            <label>수정일</label>
+            <input type="text" class="form-control" name="modDate"
+                th:value="${#temporals.format(dto.modDate,'yyyy/MM/dd HH:mm:ss')}" readonly />
+        </div>
+        <div class="uploadResult" >
+            <ul th:if="${dto.imageDTOList.size()!=0}" style="list-style: none;padding-left: 0;">
+                <li th:each="movieImage : ${dto.imageDTOList}">
+                    <img th:if="${movieImage.path != null}"
+                        th:src="|@{'/display'}?fileName=${movieImage.getThumbnailURL()}|">
+                </li>
+            </ul>
+        </div>
 
-    </div>
-  </th:block>
+            <a th:href="@{/movie/modify(gno=${dto.mno}, page=${pageRequestDTO.page}, type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}">
+                <button type="button" class="btn btn-primary">Modify</button>
+            </a>
+            <a th:href="@{/movie/list(page=${pageRequestDTO.page}, type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}">
+                <button type="button" class="btn btn-info">List</button>
+            </a>
+        
+        
+        <div>
+            <!-- Review button -->
+            <div class="mt-4">
+                <h5><span class="btn btn-info addReview">Review Register</span></h5>
+                <h5>
+                    <span class="btn btn-warning reviewCount">
+                        Review Count [[${dto.reviewCnt}]]
+                    </span>
+                </h5>
+            </div>
+
+            <!-- reviewList style -->
+            <style>
+                .card-title {
+                    cursor: pointer;
+                }
+
+                .card-subtitle {
+                    display: inline-block;
+                    width: 100px;
+                }
+
+                .card-text {
+                    display: inline-block;
+                    width: 200px;
+                    text-align: right;
+                }
+            </style>
+
+            <!-- review List view -->
+            <div class="list-group reviewList"></div>
+            
+            <!-- modal 영역 -->
+            <!-- review  modal -->
+            <!-- review modal script -->
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+                integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+            <script th:inline="javascript">
+                $(document).ready(function () {
+                    /*[+
+                    var mno = [[${dto.mno}]];
+                    var url = [[@{/reviews/movie/}]];
+                    +]*/
+
+                    var listGroup = $(".reviewList");
+                    function formatTime(str) {
+                        var date = new Date(str);
+                        return date.getFullYear() + '/' +
+                            (date.getMonth() + 1) + '/' +
+                            date.getDate() + ' ' +
+                            date.getHours() + ':' +
+                            date.getMinutes();
+                    }
+
+                    function getMovieReviews() {
+                        $.getJSON(url + mno + "/all", function (arr) {
+                            console.log(arr);
+                            var str = "";
+                            $('.reviewCount').html(" Review Count : " + arr.length);
+                            $.each(arr, function (idx, review) {
+                                console.log(review);
+                                str += ' <div class="card-body form-control" '
+                                    + 'data-reviewnum="' + review.reviewnum
+                                    +'" data-grade="' + review.grade
+                                    + '" data-mid="' + review.mid + '">';
+                                str += ' <h5 class="card-title">' + review.text
+                                    + '<h6 class="card-subtitle mb-2 text-muted gradeLength">'+"grade " + review.grade + '</h6></h5>';
+                                str += ' <h6 class="card-subtitle mb-2 text-muted">'
+                                    + review.nickname + '</h6>  ';
+                                str += ' <p class="card-text">' + formatTime(
+                                    review.regDate) + '</p>'
+                                str += ' </div>';
+                            });
+                            listGroup.html(str);
+                        });
+
+
+                        /*
+                        str = `<div class="card card-body" data-reviewnum="${review.reviewnum}"data-mid="${review.mid}">
+                        <h5 class="card-title">${review.text}<span>${review.grade}</span></h5>
+                        <h5 class="card-subtitle mb-2 text-muted">${review.nickname}</h5>
+                        <p class="card-text">${formatTime(review.regDate)}</p>
+                        </div>`
+                        */
+                    }
+
+                    getMovieReviews();
+                    var reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
+                    
+                    $('.reviewList').on("click", ".card-body", function () {
+                        var reviewnum = $(this).data("reviewnum");
+                        $("input[name='reviewnum']").val(reviewnum);
+                        $("input[name='mid']").val($(this).data('mid'));
+                        $("input[name='text']").val($(this).find('.card-title')
+                        .clone().children().remove().end().text());
+
+                        var grade = $(this).data("grade");
+                        
+                        $('.starrr').starrr({
+                            rating: grade,
+                            change: function (e, value) {
+                                console.log("target.length : "+e.target.getElementsByClassName("fa-star").length);
+                                // var grade = document.getElementsByClassName("fa-star").length;
+                                if (value) {
+                                    grade = value;
+                                }
+                            }
+                        });
+
+                        $(".starrr a:nth-child("+grade+")").trigger('click');
+                  
+                        $("#reviewModal .btn").hide();
+                        $(".reviewRemove, .reviewModify, .reviewClose").show();
+                        reviewModal.show();
+                    });
+
+                    /*[+
+                      var urlReview = [[@{/reviews/}]];
+                    +]*/
+
+                    // 추가                    
+                    $(".addReview").click(function () {
+                        reviewModal.show();
+                        $('input[name="mid"]').val('');
+                        $('input[name="text"]').val('');
+                        $('.modal-title').html("리뷰 입력");
+                        $("#reviewModal .btn").hide();
+                        
+                        var grade = 0;
+                        /*[+
+                        var mno = [[${dto.mno}]]
+                        +]*/
+                        $('.starrr').starrr({
+                            rating: grade,
+                            change: function (e, value) {
+                                if (value) {
+                                    grade = value;
+                                }
+                            }
+                        });
+                        $(".reviewSave, .reviewClose").show();
+                    });
+
+                    //삭제
+                    $(".reviewRemove").on("click", function () {
+                        var reviewnum = $("input[name='reviewnum']").val();
+                        var mno = $("input[name='mno']").val();
+                        var data = {reviewnum: reviewnum};
+                        console.log("reviewRemove...data: "+data);
+                        
+                        console.log("reviewnum>>>" + reviewnum);
+                        $.ajax({
+                            url: urlReview +mno +"/"+ reviewnum,
+                            method: 'delete',
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "text",
+                            success: function (result) {
+                                self.location.reload(); 
+                                console.log("result: " + result);
+                                getMovieReviews();                              
+                            }
+                        });
+                        reviewModal.hide();
+                    });
+
+                    // 수정
+                    $(".reviewModify").on("click", function () {
+                        var reviewnum = $("input[name='reviewnum']").val();
+                        var mno = $("input[name='mno']").val();
+        
+                        var review = { 
+                            reviewnum: reviewnum,
+                            mno: mno,
+                            mid: $('input[name="mid"]').val(),
+                            text: $('input[name="text"]').val(),
+                            grade: document.getElementsByClassName("fa-star").length,
+                        }
+                        console.log("Modify review : " + review);
+                        $.ajax({
+                            url: urlReview +mno+"/"+ reviewnum,
+                            method: 'PUT',
+                            data: JSON.stringify(review),
+                            contentType: 'application/json; charset=utf-8',
+                            success: function (result) {
+                                self.location.reload(); 
+                                console.log("result: " + result);
+                                getMovieReviews();
+                            }
+                        });
+                        reviewModal.hide();
+                    });
+
+                    // 저장
+                    $(".reviewSave").click(function () {
+                        var grade = document.getElementsByClassName("fa-star").length;
+                        var mid = $('input[name="mid"]');
+                        var text = $('input[name="text"]');
+
+                        if (mid.val() == "") {
+                            alert("아이디를 확인해주세요");
+                            mid.focus();
+                            return;
+                        }
+                        if (text.val() == "") {
+                            alert("글을 확인해주세요");
+                            text.focus();
+                            return;
+                        }
+
+                        if( grade == 0) {
+                            alert("별점을 등록해주세요");
+                            return;
+                        }
+                        var review = {
+                            mno: mno,
+                            grade: grade,
+                            mid: mid.val(),
+                            text: text.val()
+                        };
+                        console.log(review);
+                        $.ajax({
+                            url: urlReview+mno,
+                            method: 'POST',
+                            data: JSON.stringify(review),
+                            contentType: 'application/json;charset=utf-8',
+                            dataType: 'json',
+                            success: function (data) {
+                                console.log(data);
+                                var newRno = parseInt(data);
+                                alert(newRno + "번글이 등록되었습니다.");
+                                getMovieReviews();
+                            }
+                        });
+                        reviewModal.hide();
+                    });
+                });
+            </script>
+
+
+            <!-- review modal : addReview -->
+            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+                integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+                crossorigin="anonymous"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+                integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+                crossorigin="anonymous"></script>
+            <script th:src="@{/js/starrr.js}"></script>
+            <link th:href="@{/css/starrr.css}" rel="stylesheet">
+            <link rel="stylesheet"
+                href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
+            <div id="reviewModal" class="modal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Movie Review</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label>Reviewer ID</label>
+                                <input type="text" class="form-control" name="mid" />
+                                <input type="hidden" name="reviewnum">
+                            </div>
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label>Grade <span class="grade"></span></label>
+                                <div class="starrr"></div>
+                            </div>
+                            <div class="form-group">
+                                <label>Review Text</label>
+                                <input type="text" class="form-control" name="text" placeholder="Good Movie!" />
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary reviewClose"
+                                data-bs-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary reviewSave">Save</button>
+                            <button type="button" class="btn btn-warning reviewModify">Modify</button>
+                            <button type="button" class="btn btn-danger reviewRemove">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="imageModal" class="modal" tabindex="-2">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Picture</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary pictureClose"
+                                data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </th:block>
 </th:block>

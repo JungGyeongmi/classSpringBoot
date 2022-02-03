@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout/basic :: setContent(~{::content})}">
   <th:block th:fragment="content">
-    <h1>Movie List Page
+    <h1>무비 리스뜨
       <span>
         <a th:href="@{/movie/register}">
           <button type="button" class="btn btn-outline-primary">
@@ -112,7 +112,7 @@
 
     <script th:inline="javascript">
       /*[+
-      var msg=[[${msg}]];
+      var msg=[[${msg}]]
       +]*/
       if (msg) {
         console.log(msg);
