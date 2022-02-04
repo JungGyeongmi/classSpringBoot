@@ -2,68 +2,115 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout/basic :: setContent(~{::content})}">
   <th:block th:fragment="content">
-    <h1>Board Modify Page</h1>
-    <form id="frm" th:action="@{/board/modify}" th:method="post">
+    <h1>Movie Modify Page</h1>
+    <form id="frm" th:action="@{/movie/modify}" th:method="post">
       <div class="form-group">
-        <label>Gno</label>
-        <input type="text" class="form-control" name="bno"
-          th:value="${dto.bno}" readonly />
+        <label>Mno</label>
+        <input type="text" class="form-control" name="mno"
+          th:value="${dto.mno}" readonly />
           <input type="hidden" name="page" th:value="${pageRequestDTO.page}">
           <input type="hidden" name="type" th:value="${pageRequestDTO.type}">
           <input type="hidden" name="keyword" th:value="${pageRequestDTO.keyword}">
         </div>
       <div class="form-group">
-        <label>Title</label>
+        <label>타이틀</label>
         <input type="text" class="form-control" name="title"
-        th:value="${dto.title}" />
+          th:value="${dto.title}" />
       </div>
       <div class="form-group">
-        <label>Content</label>
-        <textarea class="form-control" rows="5" 
-              name="content">[[${dto.content}]]</textarea>
+        <label>평가수</label>
+        <input type="text" class="form-control"
+        th:value="${dto.reviewCnt}" readonly/>
       </div>
       <div class="form-group">
-        <label>Writer</label>
-        <input type="text" class="form-control" name="writerName"
-        th:value="${dto.writerName}" readonly/>
+        <label>평균</label>
+        <input type="text" class="form-control"
+        th:value="${dto.avg}" readonly/>
       </div>
       <div class="form-group">
-        <label>RegDate</label>
-        <input type="text" class="form-control" readonly th:value=
-        "${#temporals.format(dto.regDate,'yyyy/MM/dd HH:mm:ss')}"/>
+        <label>등록일</label>
+        <input type="text" class="form-control" readonly 
+         th:value="${#temporals.format(dto.regDate,'yyyy/MM/dd HH:mm:ss')}"/>
       </div>
       <div class="form-group">
-        <label>ModDate</label>
-        <input type="text" class="form-control" readonly th:value=
-        "${#temporals.format(dto.modDate,'yyyy/MM/dd HH:mm:ss')}"/>
+        <label>수정일</label>
+        <input type="text" class="form-control" readonly 
+          th:value="${#temporals.format(dto.modDate,'yyyy/MM/dd HH:mm:ss')}"/>
       </div>
         <button type="button" class="btn btn-primary modifyBtn">Modify</button>
         <button type="button" class="btn btn-info listBtn">List</button>
         <button type="button" class="btn btn-danger removeBtn">Remove</button>
     </form>
+
+    <style>
+      .uploadResult {
+          width: 100%;
+          background: gray;
+          margin-top: 10px;
+      }
+
+      .uploadResult ul {
+          display: flex;
+          flex-flow: row;
+          justify-content: center;
+          align-items: center;
+          vertical-align: top;
+          overflow: auto;
+      }
+
+      .uploadResult ul li {
+          list-style: none;
+          padding: 10px;
+          margin-left: 2em;
+      }
+
+      .uploadResult ul li img {
+          width: 100px;
+      }
+
+      .uploadResult ul li :hover {
+          cursor: pointer;
+      }
+  </style>
+
+  <div class="uploadResult">
+      <ul th:if="${dto.imageDTOList.size()!=0}">
+          <li th:each="movieImage : ${dto.imageDTOList}" 
+            th:data-file="${movieImage.getThumbnailURL}">
+            <button type='button' class='btn-warning btn-sm'>X</button><br>
+              <img th:if="${movieImage.path != null}"
+                  th:src="|@{'/display'}?fileName=${movieImage.getThumbnailURL()}|">
+          </li>
+      </ul>
+  </div>
+
     <script th:inline="javascript">
       var actionForm = document.querySelector("#frm");
       var removeBtn = document.querySelector(".removeBtn");
+
       removeBtn.onclick = function() {
-        /*[+ var urlremove = [[@{/board/remove}]]; +]*/
+        /*[+ var urlremove = [[@{/movie/remove}]]; +]*/
         actionForm.setAttribute("action", urlremove);
         actionForm.setAttribute("method", "post");
         actionForm.submit();
       }
+
       var modifyBtn = document.querySelector(".modifyBtn");
       modifyBtn.onclick = function() {
         var retVal = confirm("수정하시겠습니까?");
+
         if(retVal){
-          /*[+ var urlremove = [[@{/board/modify}]]; +]*/
-          actionForm.setAttribute("action", urlremove);
+          /*[+ var url = [[@{/movie/modify}]]; +]*/
+          actionForm.setAttribute("action", url);
           actionForm.setAttribute("method", "post");
           actionForm.submit();
         }
       }
+
       var listBtn = document.querySelector(".listBtn");
       listBtn.onclick = function() {
         /*[+ var urllist = 
-            [[@{/board/list(page=${pageRequestDTO.page},
+            [[@{/movie/list(page=${pageRequestDTO.page},
                     type=${pageRequestDTO.type},
                     keyword=${pageRequestDTO.keyword})}]]; +]*/
         location.href = urllist;

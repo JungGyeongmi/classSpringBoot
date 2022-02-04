@@ -72,4 +72,9 @@ public interface MovieService {
 
     // interface의 접근 제어자는 모두 public
     MovieDTO getMovie(Long mno);
+
+    // 수정
+    void modify(MovieDTO movieDTO);
+    // 삭제
+    void removeWithReviews(Long mno);
 }

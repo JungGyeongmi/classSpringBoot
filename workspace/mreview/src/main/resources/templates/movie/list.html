@@ -2,6 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout/basic :: setContent(~{::content})}">
   <th:block th:fragment="content">
+    <input type="hidden" value="${movieDTO.getTitle()}">
     <h1>무비 리스뜨
       <span>
         <a th:href="@{/movie/register}">

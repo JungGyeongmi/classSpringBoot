@@ -29,23 +29,57 @@
             <input type="text" class="form-control" name="modDate"
                 th:value="${#temporals.format(dto.modDate,'yyyy/MM/dd HH:mm:ss')}" readonly />
         </div>
-        <div class="uploadResult" >
-            <ul th:if="${dto.imageDTOList.size()!=0}" style="list-style: none;padding-left: 0;">
-                <li th:each="movieImage : ${dto.imageDTOList}">
+
+        <style>
+            .uploadResult {
+                width: 100%;
+                background: gray;
+                margin-top: 10px;
+            }
+
+            .uploadResult ul {
+                display: flex;
+                flex-flow: row;
+                justify-content: center;
+                align-items: center;
+                vertical-align: top;
+                overflow: auto;
+            }
+
+            .uploadResult ul li {
+                list-style: none;
+                padding: 10px;
+                margin-left: 2em;
+            }
+
+            .uploadResult ul li img {
+                width: 100px;
+            }
+
+            .uploadResult ul li :hover {
+                cursor: pointer;
+            }
+        </style>
+
+        <div class="uploadResult">
+            <ul th:if="${dto.imageDTOList.size()!=0}">
+                <li th:each="movieImage : ${dto.imageDTOList}" th:data-file="${movieImage.getThumbnailURL}">
                     <img th:if="${movieImage.path != null}"
                         th:src="|@{'/display'}?fileName=${movieImage.getThumbnailURL()}|">
                 </li>
             </ul>
         </div>
 
-            <a th:href="@{/movie/modify(gno=${dto.mno}, page=${pageRequestDTO.page}, type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}">
-                <button type="button" class="btn btn-primary">Modify</button>
-            </a>
-            <a th:href="@{/movie/list(page=${pageRequestDTO.page}, type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}">
-                <button type="button" class="btn btn-info">List</button>
-            </a>
-        
-        
+        <a
+            th:href="@{/movie/modify(mno=${dto.mno}, page=${pageRequestDTO.page}, type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}">
+            <button type="button" class="btn btn-primary">Modify</button>
+        </a>
+        <a
+            th:href="@{/movie/list(page=${pageRequestDTO.page}, type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}">
+            <button type="button" class="btn btn-info">List</button>
+        </a>
+
+
         <div>
             <!-- Review button -->
             <div class="mt-4">
@@ -77,7 +111,7 @@
 
             <!-- review List view -->
             <div class="list-group reviewList"></div>
-            
+
             <!-- modal 영역 -->
             <!-- review  modal -->
             <!-- review modal script -->
@@ -88,6 +122,7 @@
                     /*[+
                     var mno = [[${dto.mno}]];
                     var url = [[@{/reviews/movie/}]];
+                    var urlDisplay =[[@{/display}]]
                     +]*/
 
                     var listGroup = $(".reviewList");
@@ -100,7 +135,16 @@
                             date.getMinutes();
                     }
 
+                    $(".uploadResult li").click(function () {
+                        // alert("hello world!");
+                        var file = $(this).data('file');
+                        $('#imageModal .modal-body').html(`<img style='width:100%' src='${urlDisplay}?fileName=${file}&size=1'>`)
+                        imageModal.show();
+                    });
+
+                    // start 댓글 목록 불러오기
                     function getMovieReviews() {
+                        // 비동기식 get 방식의 함수 호출
                         $.getJSON(url + mno + "/all", function (arr) {
                             console.log(arr);
                             var str = "";
@@ -109,10 +153,10 @@
                                 console.log(review);
                                 str += ' <div class="card-body form-control" '
                                     + 'data-reviewnum="' + review.reviewnum
-                                    +'" data-grade="' + review.grade
+                                    + '" data-grade="' + review.grade
                                     + '" data-mid="' + review.mid + '">';
                                 str += ' <h5 class="card-title">' + review.text
-                                    + '<h6 class="card-subtitle mb-2 text-muted gradeLength">'+"grade " + review.grade + '</h6></h5>';
+                                    + '<h6 class="card-subtitle mb-2 text-muted gradeLength">' + "grade " + review.grade + '</h6></h5>';
                                 str += ' <h6 class="card-subtitle mb-2 text-muted">'
                                     + review.nickname + '</h6>  ';
                                 str += ' <p class="card-text">' + formatTime(
@@ -120,7 +164,7 @@
                                 str += ' </div>';
                             });
                             listGroup.html(str);
-                        });
+                        }); // end : 댓글 추가부분
 
 
                         /*
@@ -134,46 +178,63 @@
 
                     getMovieReviews();
                     var reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
-                    
+                    // 이미지 모달
+                    var imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
+
                     $('.reviewList').on("click", ".card-body", function () {
+                        $("input[name='mid']").attr('readonly', true);
+
                         var reviewnum = $(this).data("reviewnum");
                         $("input[name='reviewnum']").val(reviewnum);
                         $("input[name='mid']").val($(this).data('mid'));
                         $("input[name='text']").val($(this).find('.card-title')
-                        .clone().children().remove().end().text());
+                            .clone().children().remove().end().text());
+
 
                         var grade = $(this).data("grade");
-                        
+                        //console.log("변경 전 "+grade);
                         $('.starrr').starrr({
                             rating: grade,
+                            // 모달을 열 때 grade를 자신의 grade length나 기존 값 만큼 class를 추가해주는 방식으로 진행?
+                            // change가 watch 역할을 한다
                             change: function (e, value) {
-                                console.log("target.length : "+e.target.getElementsByClassName("fa-star").length);
-                                // var grade = document.getElementsByClassName("fa-star").length;
+                                //console.log("변경 후 : "+e.target.getElementsByClassName("fa-star").length);
+                                var grade = document.getElementsByClassName("fa-star").length;
                                 if (value) {
                                     grade = value;
                                 }
                             }
                         });
 
-                        $(".starrr a:nth-child("+grade+")").trigger('click');
-                  
+                        // click이라는 trigger로 실행
+                        $(".starrr a:nth-child(" + grade + ")").trigger('click');
+
+                        // reviewModal id를 가진 태그와 .btn 클래스를 가진 태그들을 숨김
                         $("#reviewModal .btn").hide();
+                        // 버튼들을 보여줌
                         $(".reviewRemove, .reviewModify, .reviewClose").show();
+                        // reviewModal을 보여줌
                         reviewModal.show();
                     });
 
+                    // URL 변수에 저장
                     /*[+
-                      var urlReview = [[@{/reviews/}]];
+                      var urlReview = [[@{/reviews/}]]
                     +]*/
 
                     // 추가                    
                     $(".addReview").click(function () {
+                        $("input[name='mid']").attr('readonly', false);
+
+                        // reviewModal 보여줌
                         reviewModal.show();
+
+                        // 값 가져옴
                         $('input[name="mid"]').val('');
                         $('input[name="text"]').val('');
                         $('.modal-title').html("리뷰 입력");
                         $("#reviewModal .btn").hide();
-                        
+
                         var grade = 0;
                         /*[+
                         var mno = [[${dto.mno}]]
@@ -193,19 +254,19 @@
                     $(".reviewRemove").on("click", function () {
                         var reviewnum = $("input[name='reviewnum']").val();
                         var mno = $("input[name='mno']").val();
-                        var data = {reviewnum: reviewnum};
-                        console.log("reviewRemove...data: "+data);
-                        
+                        var data = { reviewnum: reviewnum };
+                        console.log("reviewRemove...data: " + data);
+
                         console.log("reviewnum>>>" + reviewnum);
                         $.ajax({
-                            url: urlReview +mno +"/"+ reviewnum,
+                            url: urlReview + mno + "/" + reviewnum,
                             method: 'delete',
                             contentType: "application/json; charset=utf-8",
                             dataType: "text",
                             success: function (result) {
-                                self.location.reload(); 
+                                self.location.reload();
                                 console.log("result: " + result);
-                                getMovieReviews();                              
+                                getMovieReviews();
                             }
                         });
                         reviewModal.hide();
@@ -215,22 +276,23 @@
                     $(".reviewModify").on("click", function () {
                         var reviewnum = $("input[name='reviewnum']").val();
                         var mno = $("input[name='mno']").val();
-        
-                        var review = { 
+                        var mid = $('input[name="mid"]').val();
+
+                        var review = {
                             reviewnum: reviewnum,
                             mno: mno,
-                            mid: $('input[name="mid"]').val(),
+                            mid: mid,
                             text: $('input[name="text"]').val(),
                             grade: document.getElementsByClassName("fa-star").length,
                         }
                         console.log("Modify review : " + review);
                         $.ajax({
-                            url: urlReview +mno+"/"+ reviewnum,
+                            url: urlReview + mno + "/" + reviewnum,
                             method: 'PUT',
                             data: JSON.stringify(review),
                             contentType: 'application/json; charset=utf-8',
                             success: function (result) {
-                                self.location.reload(); 
+                                self.location.reload();
                                 console.log("result: " + result);
                                 getMovieReviews();
                             }
@@ -255,7 +317,7 @@
                             return;
                         }
 
-                        if( grade == 0) {
+                        if (grade == 0) {
                             alert("별점을 등록해주세요");
                             return;
                         }
@@ -267,15 +329,15 @@
                         };
                         console.log(review);
                         $.ajax({
-                            url: urlReview+mno,
+                            url: urlReview + mno,
                             method: 'POST',
                             data: JSON.stringify(review),
                             contentType: 'application/json;charset=utf-8',
                             dataType: 'json',
                             success: function (data) {
-                                console.log(data);
+                                console.log(data.mid);
                                 var newRno = parseInt(data);
-                                alert(newRno + "번글이 등록되었습니다.");
+                                alert(`reviewer ${review.mid}님의 리뷰가 등록되었습니다.`);
                                 getMovieReviews();
                             }
                         });

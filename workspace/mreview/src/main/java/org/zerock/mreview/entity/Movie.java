@@ -18,4 +18,9 @@ public class Movie extends BaseEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long mno;
   private String title;
+ 
+  public void changeTitle(String title) {
+    this.title = title;
+  }
+
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.springframework.data.domain.Page;
@@ -18,6 +19,7 @@ import org.zerock.mreview.entity.Movie;
 import org.zerock.mreview.entity.MovieImage;
 import org.zerock.mreview.repository.MovieImageRepository;
 import org.zerock.mreview.repository.MovieRepository;
+import org.zerock.mreview.repository.ReviewRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,6 +31,7 @@ public class MovieServiceImpl implements MovieService {
 
   private final MovieRepository movieRepository;
   private final MovieImageRepository imageRepository;
+  private final ReviewRepository reviewRepository;
 
   @Transactional
   @Override
@@ -76,5 +79,23 @@ public class MovieServiceImpl implements MovieService {
     Long reviewCnt = (Long) result.get(0)[3]; //리뷰 개수 - 모든 Row가 동일한 값
 
     return entitiesToDTO(movie, movieImageList, avg, reviewCnt);
+  }
+
+  @Override
+  public void modify(MovieDTO movieDTO) {
+    Optional<Movie> result = movieRepository.findById(movieDTO.getMno());
+    if(result.isPresent()){
+        Movie movie = result.get();
+        movie.changeTitle(movieDTO.getTitle());
+        movieRepository.save(movie);
+    }
+  }
+
+  @Transactional
+  @Override
+  public void removeWithReviews(Long mno) {
+    reviewRepository.deleteByMno(mno);
+    imageRepository.deleteByMno(mno);
+    movieRepository.deleteById(mno);
   }
 }
