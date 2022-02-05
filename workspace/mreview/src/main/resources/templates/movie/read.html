@@ -146,20 +146,13 @@
                         $.getJSON(url + mno + "/all", function (arr) {
                             console.log(arr);
                             var str = "";
-                            $('.reviewCount').html("후기 갯수 : " + arr.length);
+                            $('.reviewCount').html("후기 : " + arr.length);
                             $.each(arr, function (idx, review) {
                                 console.log(review);
-                                str += ' <div class="card-body form-control" '
-                                    + 'data-reviewnum="' + review.reviewnum
-                                    + '" data-grade="' + review.grade
-                                    + '" data-mid="' + review.mid + '">';
-                                str += ' <h5 class="card-title">' + review.text
-                                    + '<h6 class="card-subtitle mb-2 text-muted gradeLength">' + "grade " + review.grade + '</h6></h5>';
-                                str += ' <h6 class="card-subtitle mb-2 text-muted">'
-                                    + review.nickname + '</h6>  ';
-                                str += ' <p class="card-text">' + formatTime(
-                                    review.regDate) + '</p>'
-                                str += ' </div>';
+                                str += `<div class="card-body form-control" data-reviewnum="${review.reviewnum}" data-grade="${review.grade}" data-mid="${review.mid}">`;
+                                str += `<h5 class="card-title">${review.text}<h6 class="card-subtitle mb-2 text-muted gradeLength">grade ${review.grade}</h6></h5>`;
+                                str += `<h6 class="card-subtitle mb-2 text-muted">${review.nickname}</h6>`;
+                                str += `<p class="card-text">${formatTime(review.regDate)}</p></div>`;
                             });
                             listGroup.html(str);
                         }); // end : 댓글 추가부분
@@ -186,8 +179,10 @@
                         $("input[name='reviewnum']").val(reviewnum);
                         $("input[name='mid']").val($(this).data('mid'));
                         $("input[name='text']").val($(this).find('.card-title')
-                            .clone().children().remove().end().text());
-
+                        .clone().children().remove().end().text());
+                        
+                        console.log("세상사람들여기>>");
+                        console.log($(this).data());
 
                         var grade = $(this).data("grade");
                         //console.log("변경 전 "+grade);
@@ -205,7 +200,7 @@
                         });
 
                         // click이라는 trigger로 실행
-                        $(".starrr a:nth-child(" + grade + ")").trigger('click');
+                        // console.log($(`.strrr a:nth-child(${grade})`));
 
                         // reviewModal id를 가진 태그와 .btn 클래스를 가진 태그들을 숨김
                         $("#reviewModal .btn").hide();
@@ -365,25 +360,25 @@
                         </div>
                         <div class="modal-body">
                             <div class="form-group" style="margin-bottom: 10px;">
-                                <label>Reviewer ID</label>
+                                <label>평가자 고유번호</label>
                                 <input type="text" class="form-control" name="mid" />
                                 <input type="hidden" name="reviewnum">
                             </div>
                             <div class="form-group" style="margin-bottom: 10px;">
-                                <label>Grade <span class="grade"></span></label>
+                                <label>평가 별<span class="grade"></span></label>
                                 <div class="starrr"></div>
                             </div>
                             <div class="form-group">
-                                <label>Review Text</label>
+                                <label>평 가 글</label>
                                 <input type="text" class="form-control" name="text" placeholder="Good Movie!" />
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary reviewClose"
-                                data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary reviewSave">Save</button>
-                            <button type="button" class="btn btn-warning reviewModify">Modify</button>
-                            <button type="button" class="btn btn-danger reviewRemove">Remove</button>
+                                data-bs-dismiss="modal">닫기</button>
+                            <button type="button" class="btn btn-primary reviewSave">저장</button>
+                            <button type="button" class="btn btn-warning reviewModify">수정</button>
+                            <button type="button" class="btn btn-danger reviewRemove">삭제</button>
                         </div>
                     </div>
                 </div>

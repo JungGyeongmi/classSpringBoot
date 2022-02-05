@@ -74,7 +74,7 @@ public interface MovieService {
     MovieDTO getMovie(Long mno);
 
     // 수정
-    void modify(MovieDTO movieDTO);
+    void modify(MovieDTO movieDTO, MovieImageDTO imageDTO);
     // 삭제
     void removeWithReviews(Long mno);
 }

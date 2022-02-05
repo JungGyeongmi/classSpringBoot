@@ -83,9 +83,11 @@ public class MovieServiceImpl implements MovieService {
   }
 
   @Override
-  public void modify(MovieDTO movieDTO) {
+  public void modify(MovieDTO movieDTO, MovieImageDTO imageDTO) {
     Optional<Movie> result = movieRepository.findById(movieDTO.getMno());
     
+    log.info("세상에 여기에>>>"+imageDTO.getInum());
+
     if(result.isPresent()){
         Movie movie = result.get();
         movie.changeTitle(movieDTO.getTitle());

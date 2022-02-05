@@ -52,7 +52,7 @@ public class MovieContoller {
     @PostMapping("/modify")
     public String modify(MovieDTO movieDTO, MovieImageDTO imageDTO, PageRequestDTO pageRequestDTO, RedirectAttributes ra) {
         // 수정
-        movieService.modify(movieDTO);
+        movieService.modify(movieDTO, imageDTO);
         
         ra.addAttribute("mno", movieDTO.getMno());
         ra.addAttribute("page", pageRequestDTO.getPage());

@@ -2,10 +2,10 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:replace="~{layout/basic :: setContent(~{::content})}">
   <th:block th:fragment="content">
-    <h1>Movie Modify Page</h1>
+    <h1>영화 수정 화면</h1>
     <form id="frm" th:action="@{/movie/modify}" th:method="post">
       <div class="form-group">
-        <label>Mno</label>
+        <label>앰앤오</label>
         <input type="text" class="form-control" name="mno"
           th:value="${dto.mno}" readonly />
           <input type="hidden" name="page" th:value="${pageRequestDTO.page}">
@@ -37,9 +37,11 @@
         <input type="text" class="form-control" readonly 
           th:value="${#temporals.format(dto.modDate,'yyyy/MM/dd HH:mm:ss')}"/>
       </div>
-        <button type="button" class="btn btn-primary modifyBtn">Modify</button>
-        <button type="button" class="btn btn-info listBtn">List</button>
-        <button type="button" class="btn btn-danger removeBtn">Remove</button>
+      <br>
+        <button type="button" class="btn btn-primary modifyBtn">수정</button>
+        <button type="button" class="btn btn-info listBtn">돌아가기</button>
+        <button type="button" class="btn btn-danger removeBtn">삭제</button>
+        <button type="button" class="testBtn  btn btn-info btn">테스트용 트리거</button>
     </form>
 
     <style>
@@ -72,15 +74,13 @@
           cursor: pointer;
       }
   </style>
-
+  <br>
   <div class="uploadResult">
       <ul th:if="${dto.imageDTOList.size()!=0}">
-          <li th:each="movieImage : ${dto.imageDTOList}" 
-            th:data-file="${movieImage.getThumbnailURL}">
-            <!-- 민지짱 버튼 수정부분 -->
-            <button type='button' data-file='${movieImage.getImageURL}\' class='btn-warning btn-sm'>X</button><br>
-              <img th:if="${movieImage.path != null}"
-                  th:src="|@{'/display'}?fileName=${movieImage.getThumbnailURL()}|">
+          <li th:each="movieImage : ${dto.imageDTOList}" th:data-file="${movieImage.getThumbnailURL}">
+              <img th:if="${movieImage.path != null}" th:src="|@{'/display'}?fileName=${movieImage.getThumbnailURL()}|">
+              <br>
+              <button type='button' th:data-file='${movieImage.getImageURL}' class='btn-warning btn-sm'>X</button>
           </li>
       </ul>
   </div>
@@ -97,36 +97,33 @@
       }
 
       var modifyBtn = document.querySelector(".modifyBtn");
+      
       modifyBtn.onclick = function() {
         var retVal = confirm("수정하시겠습니까?");
 
         if(retVal){
-          /*[+ var url = [[@{/movie/modify}]]; +]*/
-          actionForm.setAttribute("action", url);
+          /*[+ var urlmodify = [[@{/movie/modify}]]; +]*/
+          actionForm.setAttribute("action", urlmodify);
           actionForm.setAttribute("method", "post");
-          actionForm.submit();
-        }
-      }
 
-      var listBtn = document.querySelector(".listBtn");
-      listBtn.onclick = function() {
-        /*[+ var urllist = 
-            [[@{/movie/list(page=${pageRequestDTO.page},
-              type=${pageRequestDTO.type},
-              keyword=${pageRequestDTO.keyword})}]]; +]*/
-        location.href = urllist;
-      }
-
-      // 사진 삭제
-      // uploadResult 태그를 click 하는 경우에 li의 button에 이벤트를 적용하겠다라는 의미임
-      $(".uploadResult ").on("click","li button",function(e){
-          console.log("delete file...");
-          var targetFile = $(this).data("file");
-          var targetLi = $(this).closest("li");
-          
+          // 여기 추가부분 수정 필요 << 모디파이시 삭제시키는것임 each문을 돌려야 할까 일단 하나만 삭제해보자
+          // var targetLi = $(this).closest("li"); // 여기서 체크된 이미지들을 가져옴
+          // var targetFile = $(this).data("file");
           /*[+
             var urlRemove = [[@{/removeFile}]];
           +]*/
+
+          for(let i =0; i<$(".uploadResult ul").children().length; i++){
+            if($(".uploadResult ul").children().eq(`${i}`).css("display")=='none'){
+              var targetFile = $(".uploadResult ul").children().eq(`${i}`).children("button").data("file");
+              // console.log(i);
+              // console.log("fileName : "+fileName);
+              var targetLi = $(`.uploadResult ul`).children("li")[`${i}`];
+            }
+          }
+          
+
+          
 
           $.ajax({
             url: urlRemove,
@@ -136,12 +133,64 @@
             dataType: 'text',
             type: 'POST',
             success: function(result){
-              alert(result?"Deleted!":"Error");
+              alert(result?"삭제완":"Error");
+              console.log(targetFile);
               targetLi.remove();
             }
           });
 
+          actionForm.submit();
+        }
+      }
+
+      // 사진 삭제
+      // uploadResult 태그를 click 하는 경우에 li의 button에 이벤트를 적용하겠다라는 의미임
+      $(".uploadResult ").on("click","li button",function(e){
+          console.log("delete image view...");
+
+          $(this).closest("li").hide(); // 안 보이게 숨김 1차 view단 처리
+          // $(this).closest("li").attr("data-image","removed");
+          
+          
+        // 대상 list에 hidden 넣기
+        // 아니면 unvigible 넣고 일단
+        // input hidden에 해당 값 넣던가...
+        // append형식으로 
+          
         });
+
+        
+        
+        // 리스트로 돌아가기
+        var listBtn = document.querySelector(".listBtn");
+        listBtn.onclick = function() {
+          /*[+ var urllist = 
+              [[@{/movie/list(page=${pageRequestDTO.page},
+                type=${pageRequestDTO.type},
+                keyword=${pageRequestDTO.keyword})}]]; +]*/
+          location.href = urllist;
+        }
+
+
+        $(".testBtn").on("click", function() {
+          // console.log($(".uploadResult ul").children().length)
+          // none으로 돼있는것만 가져오면돼
+          
+          
+          for(let i =0; i<$(".uploadResult ul").children().length; i++){
+            // console.log($(".uploadResult ul").children().eq(`${i}`).css("display"));
+            if($(".uploadResult ul").children().eq(`${i}`).css("display")=='none'){
+              // console.log($(".uploadResult ul").children().eq(`${i}`)[0]);
+              var fileName =$(".uploadResult ul").children().eq(`${i}`).data("file");
+              console.log("fileName : "+fileName);
+              console.log(i);
+              var fileLi = $(`.uploadResult ul`).children("li")[`${i}`];
+              console.log(fileLi.remove());
+            }
+          }
+          
+        });
+        
 
     </script>
   </th:block>
