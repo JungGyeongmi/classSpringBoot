@@ -100,6 +100,16 @@
       
       modifyBtn.onclick = function() {
         var retVal = confirm("수정하시겠습니까?");
+        
+        for (let i = 0; i < $(".uploadResult ul").children().length; i++) {
+          if ($(".uploadResult ul").children().eq(`${i}`).css("display") == 'none') {
+            var targetFile = $(".uploadResult ul").children().eq(`${i}`).children("button").data("file");
+            console.log(i);
+            console.log("fileName : " + targetFile);
+            var targetLi = $(`.uploadResult ul`).children("li")[`${i}`];
+            console.log(targetLi);
+          }
+        }
 
         if(retVal){
           /*[+ var urlmodify = [[@{/movie/modify}]]; +]*/
@@ -112,19 +122,7 @@
           /*[+
             var urlRemove = [[@{/removeFile}]];
           +]*/
-
-          for(let i =0; i<$(".uploadResult ul").children().length; i++){
-            if($(".uploadResult ul").children().eq(`${i}`).css("display")=='none'){
-              var targetFile = $(".uploadResult ul").children().eq(`${i}`).children("button").data("file");
-              // console.log(i);
-              // console.log("fileName : "+fileName);
-              var targetLi = $(`.uploadResult ul`).children("li")[`${i}`];
-            }
-          }
           
-
-          
-
           $.ajax({
             url: urlRemove,
             data: {
@@ -150,7 +148,8 @@
 
           $(this).closest("li").hide(); // 안 보이게 숨김 1차 view단 처리
           // $(this).closest("li").attr("data-image","removed");
-          
+          // var str  = `<input type="hidden" name="li" th:value="${}">`
+          // <input type="hidden" name="keyword" th:value="${pageRequestDTO.keyword}">
           
         // 대상 list에 hidden 넣기
         // 아니면 unvigible 넣고 일단
