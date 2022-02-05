@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.zerock.mreview.dto.MovieDTO;
+import org.zerock.mreview.dto.MovieImageDTO;
 import org.zerock.mreview.dto.PageRequestDTO;
 import org.zerock.mreview.dto.PageResultDTO;
 import org.zerock.mreview.entity.Movie;
@@ -84,6 +85,7 @@ public class MovieServiceImpl implements MovieService {
   @Override
   public void modify(MovieDTO movieDTO) {
     Optional<Movie> result = movieRepository.findById(movieDTO.getMno());
+    
     if(result.isPresent()){
         Movie movie = result.get();
         movie.changeTitle(movieDTO.getTitle());

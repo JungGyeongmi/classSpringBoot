@@ -77,7 +77,8 @@
       <ul th:if="${dto.imageDTOList.size()!=0}">
           <li th:each="movieImage : ${dto.imageDTOList}" 
             th:data-file="${movieImage.getThumbnailURL}">
-            <button type='button' class='btn-warning btn-sm'>X</button><br>
+            <!-- 민지짱 버튼 수정부분 -->
+            <button type='button' data-file='${movieImage.getImageURL}\' class='btn-warning btn-sm'>X</button><br>
               <img th:if="${movieImage.path != null}"
                   th:src="|@{'/display'}?fileName=${movieImage.getThumbnailURL()}|">
           </li>
@@ -111,10 +112,36 @@
       listBtn.onclick = function() {
         /*[+ var urllist = 
             [[@{/movie/list(page=${pageRequestDTO.page},
-                    type=${pageRequestDTO.type},
-                    keyword=${pageRequestDTO.keyword})}]]; +]*/
+              type=${pageRequestDTO.type},
+              keyword=${pageRequestDTO.keyword})}]]; +]*/
         location.href = urllist;
       }
+
+      // 사진 삭제
+      // uploadResult 태그를 click 하는 경우에 li의 button에 이벤트를 적용하겠다라는 의미임
+      $(".uploadResult ").on("click","li button",function(e){
+          console.log("delete file...");
+          var targetFile = $(this).data("file");
+          var targetLi = $(this).closest("li");
+          
+          /*[+
+            var urlRemove = [[@{/removeFile}]];
+          +]*/
+
+          $.ajax({
+            url: urlRemove,
+            data: {
+              fileName: targetFile
+            },
+            dataType: 'text',
+            type: 'POST',
+            success: function(result){
+              alert(result?"Deleted!":"Error");
+              targetLi.remove();
+            }
+          });
+
+        });
 
     </script>
   </th:block>

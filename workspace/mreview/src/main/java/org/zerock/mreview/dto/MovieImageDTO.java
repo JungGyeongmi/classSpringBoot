@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MovieImageDTO {
+    private Long inum;
     private String uuid;
     private String imgName;
     private String path;

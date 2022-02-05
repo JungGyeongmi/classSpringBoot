@@ -72,22 +72,20 @@
 
         <a
             th:href="@{/movie/modify(mno=${dto.mno}, page=${pageRequestDTO.page}, type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}">
-            <button type="button" class="btn btn-primary">Modify</button>
+            <button type="button" class="btn btn-primary">수 정</button>
         </a>
         <a
             th:href="@{/movie/list(page=${pageRequestDTO.page}, type=${pageRequestDTO.type},keyword=${pageRequestDTO.keyword})}">
-            <button type="button" class="btn btn-info">List</button>
+            <button type="button" class="btn btn-info">돌아가기</button>
         </a>
 
 
         <div>
             <!-- Review button -->
             <div class="mt-4">
-                <h5><span class="btn btn-info addReview">Review Register</span></h5>
+                <h5><span class="btn btn-info addReview">후기 등록</span></h5>
                 <h5>
-                    <span class="btn btn-warning reviewCount">
-                        Review Count [[${dto.reviewCnt}]]
-                    </span>
+                    <span class="btn btn-warning reviewCount">후기 갯수 [[${dto.reviewCnt}]]</span>
                 </h5>
             </div>
 
@@ -148,7 +146,7 @@
                         $.getJSON(url + mno + "/all", function (arr) {
                             console.log(arr);
                             var str = "";
-                            $('.reviewCount').html(" Review Count : " + arr.length);
+                            $('.reviewCount').html("후기 갯수 : " + arr.length);
                             $.each(arr, function (idx, review) {
                                 console.log(review);
                                 str += ' <div class="card-body form-control" '
@@ -395,14 +393,15 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title">Picture</h5>
+                            <!-- Picture -->
+                            <h5 class="modal-title">사진</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary pictureClose"
-                                data-bs-dismiss="modal">Close</button>
+                                data-bs-dismiss="modal">닫기</button>
                         </div>
                     </div>
                 </div>

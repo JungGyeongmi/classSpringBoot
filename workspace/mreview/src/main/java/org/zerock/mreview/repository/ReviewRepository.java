@@ -12,6 +12,7 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByMovie(Movie movie);
 
+    // delete를 위해서
     @Modifying
     @Query("delete from Review r where r.movie.mno = :mno")
     void deleteByMno(Long mno);

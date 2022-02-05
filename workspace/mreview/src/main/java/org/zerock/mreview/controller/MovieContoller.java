@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.mreview.dto.MovieDTO;
+import org.zerock.mreview.dto.MovieImageDTO;
 import org.zerock.mreview.dto.PageRequestDTO;
 import org.zerock.mreview.service.MovieService;
 
@@ -49,9 +50,8 @@ public class MovieContoller {
     }
 
     @PostMapping("/modify")
-    public String modify(MovieDTO movieDTO, PageRequestDTO pageRequestDTO, RedirectAttributes ra) {
-        // log.info("movieDTO : " + movieDTO);
-        Long mno = movieDTO.getMno();
+    public String modify(MovieDTO movieDTO, MovieImageDTO imageDTO, PageRequestDTO pageRequestDTO, RedirectAttributes ra) {
+        // 수정
         movieService.modify(movieDTO);
         
         ra.addAttribute("mno", movieDTO.getMno());
@@ -59,6 +59,8 @@ public class MovieContoller {
         ra.addAttribute("keyword", pageRequestDTO.getKeyword());
         ra.addAttribute("type", pageRequestDTO.getType());
         
+        // log.info("movieDTO : " + movieDTO);
+        Long mno = movieDTO.getMno();
         ra.addFlashAttribute("msg", mno+" 수정");
         
         // log.info("테스트 => "+movieDTO.getTitle());
