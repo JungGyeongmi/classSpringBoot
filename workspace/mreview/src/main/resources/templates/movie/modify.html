@@ -37,10 +37,26 @@
         <input type="text" class="form-control" readonly 
           th:value="${#temporals.format(dto.modDate,'yyyy/MM/dd HH:mm:ss')}"/>
       </div>
+      
+      <div class="form-group fileForm">
+        <label>이미지 넣기</label>
+        <div class="custom-file">
+          <input type="file" class="custom-file-input files form-control" id="fileInput" multiple>
+          <label class="custom-file-label" data-browse="Browse"></label>
+        </div>
+      </div>
+      <div class="box">
+      
+      </div>
+
+
         <button type="button" class="btn btn-primary modifyBtn">Modify</button>
         <button type="button" class="btn btn-info listBtn">List</button>
         <button type="button" class="btn btn-danger removeBtn">Remove</button>
-    </form>
+    
+    
+    
+      </form>
 
     <style>
       .uploadResult {
@@ -77,8 +93,7 @@
       <ul th:if="${dto.imageDTOList.size()!=0}">
           <li th:each="movieImage : ${dto.imageDTOList}" 
             th:data-file="${movieImage.getThumbnailURL}">
-            <!-- 민지짱 버튼 수정부분 -->
-            <button type='button' data-file='${movieImage.getImageURL}\' class='btn-warning btn-sm'>X</button><br>
+            <button type='button' th:data-file='${movieImage.getImageURL}' class='btn-warning btn-sm'>X</button><br>
               <img th:if="${movieImage.path != null}"
                   th:src="|@{'/display'}?fileName=${movieImage.getThumbnailURL()}|">
           </li>
@@ -86,6 +101,74 @@
   </div>
 
     <script th:inline="javascript">
+
+
+      //  upload url 선언 및 초기화
+        /*[+
+          var urlUpload = [[@{/uploadAjax/}]];
+        +]*/
+
+        var regex = new RegExp("(.*?)\.(exe|sh|zip|alz|tiff|txt)$");
+        var maxSize = 10485760;
+    
+        function checkExtension(fileName, fileSize) {
+          if (fileSize >= maxSize) {
+            alert("파일사이즈 초과");
+            return false;
+          }
+         
+          if (regex.test(fileName.substring(fileName.lastIndexOf(".")))) {
+            return false;
+          }
+
+          return true;
+        }
+    
+        $(".custom-file-input").on("change", function () {
+
+          var fileName = $(this).val().split("\\").pop();
+
+          console.log("fileName >> "+fileName);
+          console.log("확장자 인덱스 >> "+fileName.lastIndexOf("."));
+          console.log("확장자 >> "+ fileName.substring(fileName.lastIndexOf(".")+1));
+          
+          $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+          
+          var formData = new FormData();
+          var inputFile = $(this);
+          var files = inputFile[0].files; 
+          var appended = false;
+          
+          for (let i = 0; i < files.length; i++) {
+            if (!checkExtension(files[i].name, files[i].size)) {
+              return false;
+            }
+            console.log(files[i]);
+            formData.append("uploadFiles", files[i]);
+          }
+
+
+          if (!appended) { return; }
+          
+          for(var value of formData.values()) console.log("formData >> "+value);
+
+          $.ajax({
+            url: urlUpload, 
+            processData: false,
+            contentType: false,
+            data: formData,
+            type: 'POST',
+            dataType: 'json',
+            success: function (result) {
+              console.log(result);
+              showResult(result);
+            },
+            error: function (jqXHR, textStatus, errorThrown) { // 이 부분 잘 이해 안됐음
+              console.log(textStatus);
+            }
+          });
+        });
+
       var actionForm = document.querySelector("#frm");
       var removeBtn = document.querySelector(".removeBtn");
 
@@ -125,7 +208,7 @@
           var targetLi = $(this).closest("li");
           
           /*[+
-            var urlRemove = [[@{/removeFile}]];
+            var urlRemove = [[@{/removeFile/}]];
           +]*/
 
           $.ajax({
