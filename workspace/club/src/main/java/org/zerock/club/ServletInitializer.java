@@ -1,4 +1,4 @@
-package org.zero.ck.club;
+package org.zerock.club;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
