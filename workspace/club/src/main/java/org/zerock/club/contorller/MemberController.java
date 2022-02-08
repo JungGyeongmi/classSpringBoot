@@ -1,6 +1,5 @@
 package org.zerock.club.contorller;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,10 +28,9 @@ public class MemberController {
         String resultUrl = "";
         log.info("login get....");
         boolean logincheck = memberService.loginCheck(username, password);
-        log.info("loginchekc: " + logincheck);
-        
-        resultUrl = logincheck?"redirect:/":"redirect:/member/login";
-        
+        log.info("logincheck: " + logincheck);
+        resultUrl = logincheck?"redirect:/":"redirect:/member/login?error=fail";
+        log.info("result URL  >> "+resultUrl);
         return resultUrl;
     }
 }

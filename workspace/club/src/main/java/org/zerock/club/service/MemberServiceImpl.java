@@ -17,8 +17,8 @@ public class MemberServiceImpl implements MemberService{
         
         log.info("loginCheck.....");
         boolean passResult = false;
-        passResult = passwordEncoder.matches(password, "1");
-        
+        String enPw = passwordEncoder.encode("1");
+        passResult = passwordEncoder.matches(password, enPw);
         boolean usernameResult = username.equals("user1")?true:false;
         return passResult && usernameResult;
     }

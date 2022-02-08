@@ -26,24 +26,39 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     /* 
         security를 적용하기 위한 url에 대한 설정과 로그인과 
-        access denied 때
+        access denied되는 경우에
     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests().antMatchers("/sample/all").permitAll()
-        .antMatchers("/sample/member").hasRole("USER");
+        http.authorizeHttpRequests()
+        .antMatchers("/sample/all").permitAll()
+        .antMatchers("/sample/member")
+        .hasRole("USER"); // 여기서 ADMIN으로 바꾸면 로그인 할 수 있는 대상이 다르게 제한됨
+        
         http.exceptionHandling().accessDeniedHandler(cDeniedHandler());
+        
+        //1. Security login form 사용
         // http.formLogin();
-        // http.formLogin().loginPage("파일경로").loginProcessingUrl("매핑경로");
-        http.formLogin().loginPage("/member/login").loginProcessingUrl("/login");
+
+        /*2. 사용자 정의에 의한 loginprocessingurl 사용
+         http.formLogin().loginPage("파일경로").loginProcessingUrl("매핑경로");
+         member에 있는 login */
+        // http.formLogin().loginPage("/member/login"); 
+        // http.csrf().disable();
+        /* csrf 없이 동작 x */
+
+        /* 3. UserDetailsService사용 : security가 들고있는 '/login' */
+        http.formLogin().loginPage("/member/login").loginProcessingUrl("/login"); 
+        http.logout();
     }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-        .withUser("user1")
-        .password("$2a$10$JVJC1geWkmjTSHOy5Ch8ZeBovWB3kJHnW.v7.1jDU/v52NXXzN4uu")
-        .roles("USER");
-    }
+    // @Override
+    // protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    //     // inMemory 방식, 사용자의컴퓨터에 저장??? <-> DB에서 데이터들고오기
+    //     auth.inMemoryAuthentication()
+    //     .withUser("user1")
+    //     .password("$2a$10$JVJC1geWkmjTSHOy5Ch8ZeBovWB3kJHnW.v7.1jDU/v52NXXzN4uu")
+    //     .roles("USER");
+    // }
     
 }
