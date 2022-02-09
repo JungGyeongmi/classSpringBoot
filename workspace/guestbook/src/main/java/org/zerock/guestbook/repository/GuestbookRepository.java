@@ -6,6 +6,7 @@ import org.zerock.guestbook.entity.Guestbook;
 
 // 동적 query에 대응하기 위해한 repository
 public interface GuestbookRepository extends
-                JpaRepository<Guestbook, Long>, QuerydslPredicateExecutor<Guestbook> {
+                JpaRepository<Guestbook, Long>, 
+                QuerydslPredicateExecutor<Guestbook> {
 
 }

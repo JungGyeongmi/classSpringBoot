@@ -36,7 +36,7 @@ public class ClubMemberRepositoryTests {
             // default role
             clubMember.addMemberRole(ClubMemberRole.USER);
             if(i > 80) {
-                clubMember.addMemberRole(ClubMemberRole.MANAGER);
+                clubMember.addMemberRole(ClubMemberRole.MEMBER);
             }
             if(i > 90) {
                 clubMember.addMemberRole(ClubMemberRole.ADMIN);
