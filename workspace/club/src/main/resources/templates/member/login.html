@@ -8,6 +8,7 @@
   <meta name="_csrf" content="${_csrf.token}"/>
   <!-- default header name is X-CSRF-TOKEN -->
   <meta name="_csrf_header" content="${_csrf.headerName}"/>
+  <meta name="google-signin-client_id" content="301468225398-tqgtqlghs8b4056rul75skrmr60fj6ip.apps.googleusercontent.com">
   <title>로그인 화면</title>
   <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" rel="stylesheet"
   integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
@@ -38,11 +39,59 @@
       <p><input type='checkbox' name='remember-me'/> Remember me on this computer.</p>
       <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
       <button class="btn btn-lg btn-info btn-block" type="button" th:onclick="joinGo()">Join us</button>
+      <table class="table table-striped" style="width:400px; margin-top:20px;">
+        <tr>
+          <td>
+            <h3 class="form-signin-heading">Login with OAuth 2.0</h3>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <a th:href="@{/oauth2/authorization/google}">Google</a><br>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+            <div id="my-signin2"></div>
+          </td>
+        </tr>
+      </table>
+   
+      <script>
+        function onSuccess(googleUser) {
+          console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+        }
+        function onFailure(error) {
+          console.log(error);
+        }
+        function renderButton() {
+          gapi.signin2.render('my-signin2', {
+            'scope': 'profile email',
+            'width': 240,
+            'height': 50,
+            'longtitle': true,
+            'theme': 'dark',
+            'onsuccess': onSuccess,
+            'onfailure': onFailure
+          });
+        }
+      </script>
+    
+    
     </form>
   </div>
+
+  
   <script>
     // DOCUMENT.READY와 동일
-    $(function () {
+   
+    window.ready = function () {
+            var token = document.querySelector("meta[name='_csrf']").getAttribute("content");
+            var token = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+            console.log(token + "\n" + header);
+        }
+    /* $(function () {
       
       var token = $("meta[name='_csrf']").attr("content");
       var header = $("meta[name='_csrf_header']").attr("content");
@@ -53,7 +102,7 @@
 
       console.log(token+"\n"+header);
 
-    }); 
+    });*/ 
   </script>  
 </body>
 </html>

@@ -28,7 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     CustomLoginSuccessHandler loginSuccessHandler() {
-        return new CustomLoginSuccessHandler();
+        return new CustomLoginSuccessHandler(passwordEncoder());
     }
 
     @Bean
@@ -47,14 +47,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeHttpRequests()
         .antMatchers("/sample/all").permitAll()
         .antMatchers("/sample/member")
-        .hasRole("USER"); // 여기서 ADMIN으로 바꾸면 로그인 할 수 있는 대상이 다르게 제한됨
+        .hasRole("USER");
+        // 여기서 ADMIN으로 바꾸면 로그인 할 수 있는 대상이 다르게 제한됨
         
         http.exceptionHandling().accessDeniedHandler(cDeniedHandler());
         
-        //1. Security login form 사용
+        /* 1. Security login form 사용 */
         // http.formLogin();
 
-        /*2. 사용자 정의에 의한 loginprocessingurl 사용
+        /* 2. 사용자 정의에 의한 loginprocessingurl 사용
          http.formLogin().loginPage("파일경로").loginProcessingUrl("매핑경로");
          member에 있는 login */
         // http.formLogin().loginPage("/member/login"); 
@@ -64,13 +65,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         /* 3. UserDetailsService사용 : security가 들고있는 '/login' */
         http.formLogin().loginPage("/member/login")
             .loginProcessingUrl("/login")
-            .successHandler(new CustomLoginSuccessHandler());
-
-        http.logout() // 로그아웃 시 이루어질 동작 분기
+            .successHandler(new CustomLoginSuccessHandler(passwordEncoder()));
+            
+        /*4. OAuth2UserDetailsService 로그인  handler :: social login */
+        http.oauth2Login().successHandler(loginSuccessHandler());
+        
+        /*로그아웃 시 이루어질 동작 분기*/
+        http.logout() 
         .logoutSuccessHandler(logoutSuccessHandler());
         //.logoutUrl("/member/logout").logoutSuccessURL("/member/login");
         
-        http.oauth2Login();
     }
 
     /* @Override

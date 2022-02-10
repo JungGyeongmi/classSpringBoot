@@ -20,7 +20,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @Getter
 @ToString
-public class ClubMember {
+public class ClubMember extends BaseEntity {
 
     @Id
     private String email;
@@ -37,5 +37,9 @@ public class ClubMember {
 
     public void addMemberRole(ClubMemberRole clubMemberRole) {
         roleSet.add(clubMemberRole);
+    }
+
+    public void changePassword(String password){
+        this.password = password;
     }
 }

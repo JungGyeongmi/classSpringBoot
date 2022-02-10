@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>  
+</head>
+<body>
+    <h1>
+        민지가 해냄
+    </h1>
+    <hr>
+
+    <p>[[${authDTO.email}]]</p>
+    <p>[[${authDTO.password}]]</p>
+    <input type="hidden" th:value="${authDTO}">
+    <form th:action="@{/member/modify}" method="POST" id="sf">
+        <label for="email">email</label>
+        <input type="text" th:value="${authDTO.email}" readonly><br>
+      
+        <label for="email">pass </label>
+        <input type="text"  id="rePw" value=""><br>
+        <input type="text" id="oriPw" th:value="${authDTO.password}">
+
+        <input type="button" value="제출" name="subBtn" id="subBtn">
+    </form>
+
+    <script>
+        $(function(){
+
+            $("input[name='subBtn']").click(function() {
+            
+            
+                if($("#rePw").val()==""){
+                    alert("값이 비었습니다.");
+                    $("#rePw").focus();
+                }
+            
+            
+                if($("#rePw").val() == $("#oriPw").val()) {  
+                    alert("이전 비밀번호와 동일합니다.");
+                    return;
+                } else {
+                    $("#sf").submit();
+                    
+                }
+            });
+        });
+
+
+    </script>
+  
+</body>
+
+</html>

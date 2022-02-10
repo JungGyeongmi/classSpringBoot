@@ -20,8 +20,7 @@ public class SampleController {
     }
 
     @GetMapping("/member")
-    public void member(
-        @AuthenticationPrincipal ClubAuthMemberDTO authDTO) {
+    public void member(@AuthenticationPrincipal ClubAuthMemberDTO authDTO) {
         log.info("member.........");
         log.info("ClubAuthMemberDTO: "+authDTO);
     }
@@ -30,5 +29,7 @@ public class SampleController {
     public void admin() {
      log.info("admin.........");
     }
+
+    
 
 }

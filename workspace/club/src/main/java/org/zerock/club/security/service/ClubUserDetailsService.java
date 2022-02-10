@@ -30,6 +30,7 @@ public class ClubUserDetailsService  implements UserDetailsService {
     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+       
         log.info("ClubUserDetailsService loadUserByUsername " + username);
         Optional<ClubMember> result = clubMemberRepository.findByEmail(username, false);
 
