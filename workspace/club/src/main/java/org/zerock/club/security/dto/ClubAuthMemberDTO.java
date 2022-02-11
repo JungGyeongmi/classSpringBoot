@@ -54,6 +54,7 @@ public class ClubAuthMemberDTO extends User implements OAuth2User {
     Collection<? extends GrantedAuthority> authorities,
     Map<String, Object> attr) {
         this(username, password, fromSocial, authorities);
+        // attr은 구글로부터 넘어온 속성을 의미한다
         this.attr = attr;
         
     }

@@ -58,7 +58,7 @@ public class ClubOAuth2UserDetailsService extends DefaultOAuth2UserService {
     }
 
     private ClubMember saveSocialMember(String email){
-        Optional<ClubMember> result = repository.findByEmail(email, true);
+        Optional<ClubMember> result = repository.findByEmail(email);
         if(result.isPresent()) return result.get();
 
         //없다면

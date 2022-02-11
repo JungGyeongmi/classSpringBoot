@@ -1,13 +1,61 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>all</title>
+
 </head>
+
 <body>
-    <h1>전체 공개</h1>
+    <h1>전체 화면이여유（*゜ー゜*）/</h1>
     <hr>
+    <!-- <div th:if="${#authorization.expression('hasRole('ROLE_ADMIN')')}"> -->
+
+        <fieldset>
+            <legend>이사람</legend>
+            <div sec:authorize="hasRole('USER')">유저 권한 가지고 있슈</div>
+            <div sec:authorize="hasRole('MEMBER')">멤버 권한 가지고 있슈</div>
+            <div sec:authorize="hasRole('ADMIN')">관리자 권한 가지고 있슈</div>
+        </fieldset>
+
+        <div sec:authorize="isAuthenticated()">
+            오직 권한이 있는 자만이.. 이 글을 볼 수 있슈! 지가 봤슈(⊙ˍ⊙)
+            <br>
+            @조선시대CCTV
+        </div>
+        <hr>
+        <fieldset>
+            <legend>권한자 정보</legend>
+            <div sec:authentication="principal.username"></div>
+        </fieldset>
+        <fieldset>
+            <legend>권한</legend>
+            <div <fieldset>
+                <legend>이사람</legend>
+                <div sec:authorize="hasRole('USER')">유저 권한 가지고 있슈</div>
+                <div sec:authorize="hasRole('MEMBER')">멤버 권한 가지고 있슈</div>
+                <div sec:authorize="hasRole('ADMIN')">관리자 권한 가지고 있슈</div>
+        </fieldset>
+
+        <div sec:authorize="isAuthenticated()">
+            오직 권한이 있는 자만이.. 이 글을 볼 수 있슈! 지가 봤슈(⊙ˍ⊙)
+            <br>
+            @조선시대CCTV
+        </div>
+        <hr>
+        <fieldset>
+            <legend>권한자 정보</legend>
+            <div sec:authentication="principal.username"></div>
+        </fieldset>
+        <fieldset>
+            <legend>권한</legend>
+            <div sec:authentication="principal.authorities"></div>
+        </fieldset>
+    <!-- </div> -->
+
 </body>
+
 </html>

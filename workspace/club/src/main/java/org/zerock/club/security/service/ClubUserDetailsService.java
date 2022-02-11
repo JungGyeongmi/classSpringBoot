@@ -30,31 +30,23 @@ public class ClubUserDetailsService  implements UserDetailsService {
     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-       
-        log.info("ClubUserDetailsService loadUserByUsername " + username);
-        Optional<ClubMember> result = clubMemberRepository.findByEmail(username, false);
-
-        if(!result.isPresent()) {
-          throw new UsernameNotFoundException("Check Email or Social");
-        }
-
-        ClubMember clubMember = result.get();
-
-        log.info("-------------------------------------");
-        log.info(clubMember);
-
-        ClubAuthMemberDTO clubAuthMemberDTO = new ClubAuthMemberDTO(
-            clubMember.getEmail(),
-            clubMember.getPassword(),
-            clubMember.isFromSocial(),
-            clubMember.getRoleSet().stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_"+role.name()))
+      log.info("ClubUserDetailsService loadUserByUsername:"+username);
+      Optional<ClubMember> result = 
+              clubMemberRepository.findByEmail(username);
+      if(!result.isPresent()) {
+        throw new UsernameNotFoundException("Check Email or Social");
+      }
+      ClubMember clubMember = result.get();
+      log.info("clubMember: "+clubMember);
+      ClubAuthMemberDTO clubAuthMemberDTO = new ClubAuthMemberDTO(
+        clubMember.getEmail(), clubMember.getPassword(), 
+        clubMember.isFromSocial(), 
+        clubMember.getRoleSet().stream().map(
+          role -> new SimpleGrantedAuthority("ROLE_"+role.name()))
                 .collect(Collectors.toSet())
-            );
-
-        clubAuthMemberDTO.setName(clubMember.getName());
-        clubAuthMemberDTO.setFromSocial(clubMember.isFromSocial());
-        
-        return clubAuthMemberDTO;
+      );
+      clubAuthMemberDTO.setName(clubMember.getName());
+      clubAuthMemberDTO.setFromSocial(clubMember.isFromSocial());
+      return clubAuthMemberDTO;
     }
 }

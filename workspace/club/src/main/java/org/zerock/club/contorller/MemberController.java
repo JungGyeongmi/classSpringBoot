@@ -1,14 +1,17 @@
 package org.zerock.club.contorller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+// import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zerock.club.dto.ClubMemberDTO;
-import org.zerock.club.entity.ClubMember;
+// import org.zerock.club.entity.ClubMember;
 import org.zerock.club.security.dto.ClubAuthMemberDTO;
 import org.zerock.club.service.MemberService;
 
@@ -41,7 +44,7 @@ public class MemberController {
         return resultUrl;
     }
 
-    @GetMapping("/modify")
+    /*@GetMapping("/modify")
     public void modify(@AuthenticationPrincipal ClubAuthMemberDTO authDTO, Model model){ 
          log.info("modify get....");
         log.info("minji usernmae " + authDTO.getEmail());
@@ -58,5 +61,24 @@ public class MemberController {
         memberService.modify(authDTO);
 
         return "redirect:/member/modify";
+    }*/
+
+    @GetMapping("modify")
+    public void modify(@AuthenticationPrincipal 
+          ClubAuthMemberDTO clubAuthMemberDTO, Model model){
+      model.addAttribute("auth", clubAuthMemberDTO);
+      List<String> roleNames = new ArrayList<>();
+      clubAuthMemberDTO.getAuthorities().forEach(authority ->{
+        roleNames.add(authority.getAuthority());
+      });
+      model.addAttribute("roleNames", roleNames);
+    }
+  
+    @PostMapping("modify")
+    public String modifyForm(ClubMemberDTO clubMemberDTO, Model model){
+      String result="redirect:/sample/all";
+      log.info("ClubMemberDTO:"+clubMemberDTO);
+      memberService.updateClubMemberDTO(clubMemberDTO);
+      return result;
     }
 }

@@ -46,4 +46,10 @@ public class MemberServiceImpl implements MemberService{
     //     clubMemberRepository.save(clubMember);
     // }
 
+    @Override
+    public void updateClubMemberDTO(ClubMemberDTO clubMemberDTO) {
+      log.info("updateClubMemberDTO..clubMemberDTO:"+clubMemberDTO);
+      // repository.save
+    }
+
 }

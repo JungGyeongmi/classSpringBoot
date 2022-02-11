@@ -19,6 +19,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler, Authentic
             AccessDeniedException accessDeniedException) throws IOException, ServletException {
         log.error("Access Denied Handler");
         log.error("Redirect.........");
+        log.error("requst Context Path "+request.getContextPath());
         response.sendRedirect(request.getContextPath()+"/accessError");
         
     }
@@ -31,6 +32,4 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler, Authentic
         response.sendRedirect(request.getContextPath()+"/accessError");
         
     }
-    
-
 }
