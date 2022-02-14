@@ -1,0 +1,76 @@
+package org.zerock.club.security.filter;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.util.AntPathMatcher;
+import org.springframework.util.StringUtils;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import lombok.extern.log4j.Log4j2;
+import net.minidev.json.JSONObject;
+
+@Log4j2
+public class ApiCheckFilter extends OncePerRequestFilter {
+
+    private AntPathMatcher antPathMatcher;
+    private String pattern;
+
+    public ApiCheckFilter(String pattern){
+        this.antPathMatcher = new AntPathMatcher();
+        this.pattern = pattern;
+    }
+
+    @Override
+    protected void doFilterInternal (
+        HttpServletRequest request, 
+        HttpServletResponse response, 
+        FilterChain filterChain)
+    throws ServletException, IOException {
+       
+        // 어디서 요청되었는지 확인 가능
+        log.info("REQUEST URI: "+request.getRequestURI());
+        // patter형식과 요청지가 같은지 확인
+        log.info(antPathMatcher.match(pattern, request.getRequestURI()));
+        
+        if(antPathMatcher.match(pattern, request.getRequestURI())){
+            log.info("ApiCheckFilter.............");
+            log.info("ApiCheckFilter.............");
+            log.info("ApiCheckFilter.............");
+            
+            boolean checkHeader = checkAuthHeader(request);
+            if(checkHeader) {
+                filterChain.doFilter(request, response);
+                return;
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.setContentType("application/json;charset=uth-8");
+                JSONObject json =  new JSONObject();
+                String message = "FAIL CHECK API TOKEN";
+                json.put("code", "403");
+                json.put("message", message);
+                PrintWriter out = response.getWriter();
+                out.print(json);
+                return;
+            }
+        }
+
+        filterChain.doFilter(request, response); // 다음 필터로 진행
+    }
+
+    private boolean checkAuthHeader (HttpServletRequest request){
+        boolean checkResult = false;
+        String authHeader = request.getHeader("Authorization");
+                            // 복수개의 데이터가 들어가있음
+        if(StringUtils.hasText(authHeader)){
+            log.info("Authorization exist "+authHeader);
+            if(authHeader.equals("1234")) checkResult = true;
+        }
+        return checkResult;
+    }
+}

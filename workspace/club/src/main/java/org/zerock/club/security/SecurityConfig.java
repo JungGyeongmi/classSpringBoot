@@ -8,6 +8,10 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.zerock.club.security.filter.ApiCheckFilter;
+import org.zerock.club.security.filter.ApiLoginFilter;
+import org.zerock.club.security.handler.ApiLoginFailHandler;
 import org.zerock.club.security.handler.CustomAccessDeniedHandler;
 import org.zerock.club.security.handler.CustomLogoutSuccessHandler;
 import org.zerock.club.security.service.ClubUserDetailsService;
@@ -42,6 +46,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new CustomLogoutSuccessHandler();
     }
 
+    @Bean 
+    public ApiCheckFilter apiCheckFilter() {
+                            // 하위 폴더 모두 포함
+        return new ApiCheckFilter("/notes/**/*");
+    }
+
+    @Bean
+    public ApiLoginFilter apiLoginFilter() throws Exception {
+        ApiLoginFilter apiLoginFilter = new ApiLoginFilter("/api/login");
+        apiLoginFilter.setAuthenticationManager(authenticationManager());
+        apiLoginFilter.setAuthenticationFailureHandler(new ApiLoginFailHandler());
+        return apiLoginFilter;
+    }
+    
     // @Bean
     // public ApiCheckFilter apiCheckFilter(){
     //     return new apiCheckFilter("/notes/**/*", jwtUtil());
@@ -61,12 +79,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // 어느 페이지에 어떤 권한을 줄 것인가에 대한 것
         // http.authorizeHttpRequests()
+        // .antMatchers("/notes").permitAll()
         // .antMatchers("/sample/all").permitAll()
         // .antMatchers("/sample/member").hasRole("MEMBER")
         // .antMatchers("/sample/admin").hasRole("ADMIN");
 
         // 여기서 ADMIN으로 바꾸면 로그인 할 수 있는 대상이 다르게 제한됨
-        http.exceptionHandling().accessDeniedHandler(cDeniedHandler());
+        // http.exceptionHandling().accessDeniedHandler(cDeniedHandler());
         
         /* 1. Security login form 사용 */
         // http.formLogin();
@@ -75,8 +94,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
          http.formLogin().loginPage("파일경로").loginProcessingUrl("매핑경로");
          member에 있는 login */
         // http.formLogin().loginPage("/member/login"); 
-        // http.csrf().disable();
-        /* csrf 없이 동작 x */
 
         /* 3. UserDetailsService사용 : security가 들고있는 '/login' */
         http.formLogin().loginPage("/member/login")
@@ -86,6 +103,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         /* 4. OAuth2UserDetailsService 로그인  handler :: social login */
         http.oauth2Login().successHandler(loginSuccessHandler());
         
+        /* csrf 없이 동작 x */
+        http.csrf().disable();
+
         /*로그아웃 시 이루어질 동작 분기*/
         http.logout() 
         .logoutSuccessHandler(logoutSuccessHandler());
@@ -95,7 +115,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.rememberMe().tokenValiditySeconds(60*60*24*7)
             .userDetailsService(clubUserDetailsService);
 
-        http.addFilterBefore(apiCheckFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(apiCheckFilter(), 
+            UsernamePasswordAuthenticationFilter.class);
+
+        http.addFilterBefore(apiLoginFilter(), 
+            UsernamePasswordAuthenticationFilter.class);
     }
 
 
