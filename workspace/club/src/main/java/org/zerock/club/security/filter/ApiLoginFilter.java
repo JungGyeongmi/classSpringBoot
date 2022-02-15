@@ -7,20 +7,24 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.zerock.club.security.dto.ClubAuthMemberDTO;
+import org.zerock.club.security.util.JWTUtil;
 
 import lombok.extern.log4j.Log4j2;
 
 @Log4j2
 public class ApiLoginFilter extends AbstractAuthenticationProcessingFilter {
 	
-	public ApiLoginFilter (String defaultFilterProcessesUrl) { 
-		super(defaultFilterProcessesUrl);
-	}
+    private JWTUtil jwtUtil;
+
+    public ApiLoginFilter(String defaultFilterProessesUrl, JWTUtil jwtUtil) {
+        super(defaultFilterProessesUrl);
+        this.jwtUtil = jwtUtil;
+    }
 	
 	@Override
 	public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) 
@@ -43,14 +47,32 @@ public class ApiLoginFilter extends AbstractAuthenticationProcessingFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
-            Authentication authResult) throws IOException, ServletException {
+        Authentication authResult) throws IOException, ServletException {
+    
+        log.info("ApiLoginFilter successfulAuthentication: " + authResult);
+        log.info("Principal: " + authResult.getPrincipal());
         
-            log.info("ApiLoginFilter successfulAuthentication: " + authResult);
-            log.info("Principal: " + authResult.getPrincipal());
-            
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("text/html;charset=utf-8");
-            response.getWriter().print("<script>alert('Login success!');</script>");
+
+        // response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        // response.setContentType("text/html;charset=utf-8");
+        // response.getWriter().print("<script>alert('Login success!');</script>");
+        log.info("ApiLoginFilter successfulAuthentication: " + authResult);
+        log.info("Principal: " + authResult.getPrincipal());
+
+        // getusername으로 변경함
+        String email = ((ClubAuthMemberDTO)authResult.getPrincipal()).getUsername();
+        String token = null;
+
+        try {
+            token = jwtUtil.generateToken(email);
+            response.setContentType("text/plain");
+            response.getOutputStream().write(token.getBytes());
+            log.info(token);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+   
+   
     }    
 
 }

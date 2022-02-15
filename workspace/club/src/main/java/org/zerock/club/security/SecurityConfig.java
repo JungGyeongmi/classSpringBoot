@@ -15,6 +15,7 @@ import org.zerock.club.security.handler.ApiLoginFailHandler;
 import org.zerock.club.security.handler.CustomAccessDeniedHandler;
 import org.zerock.club.security.handler.CustomLogoutSuccessHandler;
 import org.zerock.club.security.service.ClubUserDetailsService;
+import org.zerock.club.security.util.JWTUtil;
 import org.zerock.club.security.handler.CustomLoginSuccessHandler;
 
 import lombok.extern.log4j.Log4j2;
@@ -46,31 +47,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new CustomLogoutSuccessHandler();
     }
 
-    @Bean 
-    public ApiCheckFilter apiCheckFilter() {
-                            // 하위 폴더 모두 포함
-        return new ApiCheckFilter("/notes/**/*");
+    @Bean
+    public ApiCheckFilter apiCheckFilter(){
+        // 모든 하위 폴더 포함
+        return new ApiCheckFilter("/club/notes/**/*", jwtUtil());
     }
 
     @Bean
     public ApiLoginFilter apiLoginFilter() throws Exception {
-        ApiLoginFilter apiLoginFilter = new ApiLoginFilter("/api/login");
+        ApiLoginFilter apiLoginFilter = new ApiLoginFilter("/api/login", jwtUtil());
         apiLoginFilter.setAuthenticationManager(authenticationManager());
         apiLoginFilter.setAuthenticationFailureHandler(new ApiLoginFailHandler());
         return apiLoginFilter;
     }
+
+    @Bean
+    public JWTUtil jwtUtil() {
+        return new JWTUtil();
+    }
     
-    // @Bean
-    // public ApiCheckFilter apiCheckFilter(){
-    //     return new apiCheckFilter("/notes/**/*", jwtUtil());
-    // }
-
-    // @Bean
-    // public JWTUtil jwtUtil(){
-    //     return new JWTUtil();
-    // }
-
-
     /* 
         security를 적용하기 위한 url에 대한 설정과 로그인과 
         access denied되는 경우에

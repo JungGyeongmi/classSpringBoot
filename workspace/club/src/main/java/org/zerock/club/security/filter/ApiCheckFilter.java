@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.zerock.club.security.util.JWTUtil;
 
 import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONObject;
@@ -20,10 +21,12 @@ public class ApiCheckFilter extends OncePerRequestFilter {
 
     private AntPathMatcher antPathMatcher;
     private String pattern;
+    private JWTUtil jwtUtil;
 
-    public ApiCheckFilter(String pattern){
+    public ApiCheckFilter(String pattern, JWTUtil jwtUtil){
         this.antPathMatcher = new AntPathMatcher();
         this.pattern = pattern;
+        this.jwtUtil = jwtUtil;
     }
 
     @Override
@@ -38,6 +41,11 @@ public class ApiCheckFilter extends OncePerRequestFilter {
         // patter형식과 요청지가 같은지 확인
         log.info(antPathMatcher.match(pattern, request.getRequestURI()));
         
+        // 여기 pattern에 contentxt path 추가
+        pattern = request.getContextPath() + pattern;
+
+        log.info("pattern>>>>"+pattern);
+
         if(antPathMatcher.match(pattern, request.getRequestURI())){
             log.info("ApiCheckFilter.............");
             log.info("ApiCheckFilter.............");
@@ -67,9 +75,16 @@ public class ApiCheckFilter extends OncePerRequestFilter {
         boolean checkResult = false;
         String authHeader = request.getHeader("Authorization");
                             // 복수개의 데이터가 들어가있음
-        if(StringUtils.hasText(authHeader)){
+        if(StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")){
             log.info("Authorization exist "+authHeader);
-            if(authHeader.equals("1234")) checkResult = true;
+            try{
+                String email = jwtUtil.validateAndExtract(authHeader.substring(7));
+                log.info("validate Result: "+email);
+                checkResult = email.length() > 0;
+            }catch(Exception e) {
+
+            }
+
         }
         return checkResult;
     }

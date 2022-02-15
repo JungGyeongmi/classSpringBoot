@@ -66,7 +66,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler{
                     // 그냥 from의 social이라는 문자를 넘김
                 }
 
-                auth.getAuthorities().forEach(authority -> {
+                clubAuthMemberDTO.getAuthorities().forEach(authority -> {
                     roleNames.add(authority.getAuthority());
                 });
                 

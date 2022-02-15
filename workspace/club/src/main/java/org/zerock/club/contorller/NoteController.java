@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,21 +27,19 @@ public class NoteController {
 
     private final NoteService noteService;
 
-    @PreAuthorize("permitAll()")
     @PostMapping(value= "")
     public ResponseEntity<Long> register(@RequestBody NoteDTO noteDTO){
         log.info("register......NoteDTO : "+noteDTO);
         Long num = noteService.register(noteDTO);
         return new ResponseEntity<>(num, HttpStatus.OK);
     }
-    @PreAuthorize("permitAll()")
+
     @GetMapping(value="/{num}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NoteDTO> read(@PathVariable("num") Long num) {
         log.info("read........num:"+num);
         return new ResponseEntity<>(noteService.get(num), HttpStatus.OK);
     }
 
-    @PreAuthorize("permitAll()")
     @GetMapping(value = "/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<NoteDTO>> getList(String email){
         log.info("all........email : "+email);
