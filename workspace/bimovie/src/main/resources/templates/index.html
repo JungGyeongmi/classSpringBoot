@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>스프링 보안</h1>
+    <hr>
+    <fieldset>
+        <legend>csrf 적용 : 스프링 보안이 가지는 로그인 로그아웃 화면</legend>
+        <a th:href="@{/login}">로그인</a><br>
+        <a th:href="@{/logout}">로그아웃(GET 방식: 로그아웃 페이지 추가)</a><br>
+        <form th:action="@{/logout}" method="POST">
+            <input type="submit" value="로그아웃(POST 방식: 즉시 로그아웃)">
+        </form>
+    </fieldset>
+    <br>
+    <fieldset>
+        <legend>사용자 설정 로그인 로그아웃 화면</legend>
+        <a th:href="@{/sample/all}">/sample/all</a><br>
+        <a th:href="@{/sample/admin}">/sample/admin</a><br>
+        <a th:href="@{/sample/member}">/sample/member</a><br>
+        <a th:href="@{/sample/exOnly}">/sample/exOnly</a><br>
+        <a th:href="@{/member/login}">/member/login</a><br>
+        <a th:href="@{/api/login?email=user95@zerock.org&pw=1}">?email=user95@zerock.org</a><br>
+        <form th:action="@{/logout}" method="POST">
+            <input type="submit" value="/logout">
+        </form>
+    </fieldset>
+</body>
+</html>
