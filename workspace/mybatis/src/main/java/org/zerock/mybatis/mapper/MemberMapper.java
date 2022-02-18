@@ -2,8 +2,12 @@ package org.zerock.mybatis.mapper;
 
 import java.util.List;
 
-import org.zerock.mybatis.vo.MemberVo;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+import org.zerock.mybatis.vo.MemberVO;
+
+@Mapper
 public interface MemberMapper {
 /*
   VO는 지난시간에 제가 요요요 저저 말씀드린거있죠
@@ -14,6 +18,15 @@ public interface MemberMapper {
 
   repository가 mapper로 변경되는 것이다
 */
-   public List<MemberVo> getList();
-   public Integer insert(MemberVo member); 
-}
+   public List<MemberVO> getList();
+  //  public Integer insert(MemberVO member); 
+
+  /* 변수에는 #을 붙여준다 */
+   @Select("Select * from m_member where mid=#{mid}")
+   public MemberVO getMemberWithMid(Long mid);
+
+   public void insert(MemberVO vo);
+   public long update(MemberVO vo);
+   public void delete(long mid);
+
+  }

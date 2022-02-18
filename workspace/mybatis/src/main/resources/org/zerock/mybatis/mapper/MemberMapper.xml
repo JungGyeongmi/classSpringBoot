@@ -2,11 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="or.zerock.mybatis.mapper.MemberMapper">
+<mapper namespace="org.zerock.mybatis.mapper.MemberMapper">
    
-    <select id="getList" resultType="MemberVo">
+    <select id="getList" resultType="org.zerock.mybatis.vo.MemberVO">
         <![CDATA[ 
             SELECT * FROM m_member where mid >= 0;
         ]]>
     </select>
+    <insert id="insert">
+
+        insert into m_member(email, nickname, pw, regdate)
+        values(#{id},#{nickname}, #{pw}, now())
+
+    </insert>
+    <update id="update">
+
+        update m_member set email=#{email},
+        nickname=#{nickname},
+        pw=#{pw},
+        where
+        mid=#{mid}
+
+    </update>
+    <delete id="delete">
+
+        delete from m_member where mid=#{mid}
+
+    </delete>
+
 </mapper>

@@ -2,8 +2,11 @@ package org.zerock.mybatis.service;
 
 import java.util.List;
 
-import org.zerock.mybatis.vo.MemberVo;
+import org.zerock.mybatis.vo.MemberVO;
 
 public interface MemberService {
-    List<MemberVo> getList();
+    List<MemberVO> getList();
+    
+    MemberVO getMember(long mid);
+
 }
