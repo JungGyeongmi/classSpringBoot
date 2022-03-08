@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,6 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    <h1>Welcome 님</h1>
+    <h1>Welcome <b th:text="${myName}"></b>님</h1>
 </body>
 </html>
