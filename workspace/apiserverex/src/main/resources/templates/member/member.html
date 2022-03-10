@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <!-- default header name is X-CSRF-TOKEN -->
+  <!-- <meta name="_csrf" th:content="${_csrf.token}" />
+  <meta name="_csrf_header" th:content="${_csrf.headerName}" /> -->
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <ul>
+      <li th:each="dto : ${list}">
+          <span th:text="${dto.mid}"></span>
+          <span th:text="${dto.email}"></span>
+          <span th:text="${dto.nickname}"></span>
+          <span th:text="${dto.regdate}"></span>
+      </li>
+  </ul>
+</body>
+</html>

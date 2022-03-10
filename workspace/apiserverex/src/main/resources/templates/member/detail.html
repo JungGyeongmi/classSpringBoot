@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Member Detail</h1>
+  <div sec:authorize="hasRole('USER')">Has USER ROLE</div>
+  <div sec:authorize="hasRole('MEMBER')">Has MEMBER ROLE</div>
+  <div sec:authorize="hasRole('ADMIN')">Has ADMIN ROLE</div>
+  <div sec:authorize="isAuthenticated()">
+    Only Authenticated user can see this Text
+  </div>
+  Authenticated username:<span sec:authentication="name"></span><br>
+  Authenticated user roles:
+  <div sec:authentication="principal.authorities"></div>
+
+  <p>
+    <label class="sr-only">mno</label>
+    <input type="text" class="form-control" th:value="${auth.mno}" readonly>
+  </p>
+  <p>
+    <label class="sr-only">Email</label>
+    <input type="text" class="form-control" th:value="${auth.email}" readonly>
+  </p>
+  <p>
+    <label class="sr-only">username</label>
+    <input type="text" class="form-control" th:value="${auth.username}" readonly>
+  </p>
+  <p>
+    <label class="sr-only">Name</label>
+    <input type="text" class="form-control" th:value="${auth.name}" readonly>
+  </p>
+  <p>
+    <label class="sr-only">fromSocial</label>
+    <input type="text" class="form-control" th:value="${auth.fromSocial}" readonly>
+  </p>
+  <p>
+    <label class="sr-only">Mobile</label>
+    <input type="text" class="form-control" th:value="${auth.mobile}"readonly>
+  </p>
+  <p>
+    <label class="sr-only">roleSet</label>
+    <ul>
+      <li th:each="role : ${auth.authorities}">
+        <span th:text="${role}"></span>
+      </li>
+    </ul>
+  </p>
+
+</body>
+
+</html>

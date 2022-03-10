@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>Api Server 구축</h1>
+  <hr>
+  <fieldset>
+    <legend><b>csrf 미적용</b> 사용자 제작 로그인,로그아웃페이지</legend><br>
+    <a th:href="@{/member/login}">/member/login</a><br><br>
+    <a th:href="@{/member/detail}">MyPage</a><br><br>
+    <form method="POST" th:action="@{/logout}">
+      <button>로그아웃</button>
+    </form>
+  </fieldset>
+</body>
+
+</html>
