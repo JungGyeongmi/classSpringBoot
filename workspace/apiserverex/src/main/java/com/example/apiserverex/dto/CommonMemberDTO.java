@@ -1,7 +1,8 @@
 package com.example.apiserverex.dto;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,8 +10,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
+@Builder
 @AllArgsConstructor
 public class CommonMemberDTO {
   private Long mno;
@@ -20,8 +21,10 @@ public class CommonMemberDTO {
   private String mobile;
   private String password;
   private boolean fromSocial;
-  private LocalDateTime modDate, regDate;
+  private LocalDateTime modDate;
+  private LocalDateTime regDate;
 
-  private Collection<String> roleSet;
+  @Builder.Default
+  private List<String> roleSet = new ArrayList<>();
 
 }
