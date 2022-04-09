@@ -27,20 +27,20 @@ public class ClubMemberRepositoryTests {
 
         IntStream.rangeClosed(1, 100).forEach(i -> {
             ClubMember clubMember = ClubMember.builder()
-                    .email("user"+i+"@zerock.org")
-                    .name("사용자"+i)
-                    .fromSocial(false)
-                    .password(passwordEncoder.encode("1"))
-                    .build();
+                .email("user"+i+"@zerock.org")
+                .name("사용자"+i)
+                .fromSocial(false)
+                .password(passwordEncoder.encode("1"))
+                .build();
 
-            // default role
-            clubMember.addMemberRole(ClubMemberRole.USER);
-            if(i > 80) {
-                clubMember.addMemberRole(ClubMemberRole.MEMBER);
-            }
-            if(i > 90) {
-                clubMember.addMemberRole(ClubMemberRole.ADMIN);
-            }
+                // default role
+                clubMember.addMemberRole(ClubMemberRole.USER);
+                if(i > 80) {
+                    clubMember.addMemberRole(ClubMemberRole.MEMBER);
+                }
+                if(i > 90) {
+                    clubMember.addMemberRole(ClubMemberRole.ADMIN);
+                }
 
             repository.save(clubMember);
             

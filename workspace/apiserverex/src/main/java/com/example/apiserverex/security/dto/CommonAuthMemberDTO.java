@@ -31,17 +31,21 @@ public class CommonAuthMemberDTO extends User implements OAuth2User {
     Long mno,
     String username, String password,
     String name, String email, String mobile,
+   
     boolean fromSocial,
+    
     Collection<? extends GrantedAuthority> authorities) {
-    super(username, password, authorities);
-    this.mno = mno;
-    this.username = username;
-    this.password = password;
-    this.name = name;
-    this.email = username;
-    this.mobile = mobile;
-    this.fromSocial = fromSocial;
-    log.info("ClubAuthMemberDTO 생성자 실행");
+
+      super(username, password, authorities);
+    
+      this.mno = mno;
+      this.username = username;
+      this.password = password;
+      this.name = name;
+      this.email = username;
+      this.mobile = mobile;
+      this.fromSocial = fromSocial;
+      log.info("ClubAuthMemberDTO 생성자 실행");
   }
 
   // OAuth로부터 사용자를 초기화하는 생성자2

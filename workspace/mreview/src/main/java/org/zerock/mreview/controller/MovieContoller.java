@@ -36,7 +36,6 @@ public class MovieContoller {
 
     @GetMapping("/list")
     public void list(PageRequestDTO pageRequestDTO, Model model) {
-        
         log.info("pageRequestDTO: " + pageRequestDTO);
         model.addAttribute("result", movieService.getList(pageRequestDTO));
     }
@@ -77,7 +76,7 @@ public class MovieContoller {
         if(movieService.getList(pageRequestDTO).getDtoList().size()==0 &&
         pageRequestDTO.getPage()!=1) {
             pageRequestDTO.setPage(pageRequestDTO.getPage()-1);
-            };
+        };
 
         ra.addAttribute("page", pageRequestDTO.getPage());
         ra.addFlashAttribute("msg", mno+" 삭제");

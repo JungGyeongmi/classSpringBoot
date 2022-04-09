@@ -61,7 +61,7 @@ public class BoardController {
         if(boardService.getList(pageRequestDTO).getDtoList().size()==0 &&
         pageRequestDTO.getPage()!=1) {
             pageRequestDTO.setPage(pageRequestDTO.getPage()-1);
-            };
+        };
 
         ra.addAttribute("page", pageRequestDTO.getPage());
         ra.addFlashAttribute("msg", bno+" 삭제");

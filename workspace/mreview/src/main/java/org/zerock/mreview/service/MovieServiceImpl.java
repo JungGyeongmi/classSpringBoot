@@ -57,7 +57,7 @@ public class MovieServiceImpl implements MovieService {
     Function<Object[], MovieDTO> fn = (arr -> entitiesToDTO(
         (Movie) arr[0],
         (List<MovieImage>) (Arrays.asList((MovieImage) arr[1])),
-        (Double) arr[2],
+         (Double) arr[2],
         (Long) arr[3]));
     return new PageResultDTO<>(result, fn);
   }

@@ -46,7 +46,7 @@ public interface MemberService {
         .fromSocial(cMember.isFromSocial())
         .roleSet(cMember.getRoleSet().stream().map( 
             role->new String("ROLE_"+role.name()))
-            .collect(Collectors.toSet()))
+            .collect(Collectors.toList()))
         .regDate(cMember.getRegDate())
         .modDate(cMember.getModDate())
         .build();

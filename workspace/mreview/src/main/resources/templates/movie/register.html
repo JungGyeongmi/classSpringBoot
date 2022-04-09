@@ -135,6 +135,17 @@
             str+= `<img src='${urlDisplay}?fileName=${obj.thumbnailURL}'></div></li>`;
           });
           uploadUL.append(str); // ul에 전달쓰
+
+          
+          $(".uploadResult li").each(function (i, obj) {
+            var target = $(obj);
+            
+            str += `<input type='hidden' name='imageDTOList[${i}].imgName' value='${target.data('name')}'>
+            <input type='hidden' name='imageDTOList[${i}].path' value='${target.data('path')}'>
+            <input type='hidden' name='imageDTOList[${i}].uuid' value='${target.data('uuid')}'>`;
+        });
+
+        $(".box").html(str);
         }
         
       });
